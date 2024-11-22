@@ -1,20 +1,20 @@
 program jacobi
-    integer, parameter :: N=3,len=20
+    integer, parameter :: N=3,len=1000
     real :: A(N,N), b(n), x(n), x_1(n)
     integer :: iter, i,j,k
     real :: sum, error
     real, parameter :: tolerancia=1.0e-9
 
         
-    b= [15,10,10] !escriu el vector del terme independent, b    
-    A = reshape([4.0, -1.0, 0.0, &
-             -1.0, 4.0, -1.0, &
-              0.0, -1.0, 4.0], [n, n])!definim la matriu A
+    b= [2,3,-1] !escriu el vector del terme independent, b    
+    A = reshape([10,-1,9, &
+                 -1,5,4, &
+                 1,2,7], [n, n])!definim la matriu A
 
-    x= reshape([0,0,0], [n]) !suposició inicial per x
-    x_1= reshape([0,0,0], [n])
+    x= [0.0, 0.0, 0.0] !suposició inicial per x
+    x_1= [0.0,0.0,0.0]
     
-    print *, "ja estic resulent el teu sistema"
+    print *, "ja estic resolent el teu sistema"
     
     do iter = 1, len
     
@@ -34,13 +34,18 @@ program jacobi
             print*, "ha convergit en", iter, "iteracions"
             exit
         end if
+        if (iter==len) then
+            print*, "no ha convergit"
+            stop 
+        end if
+        
     end do
         
-        
-    write(*, *) "la solució al teu sistema és:"
-    do i = 1, n
-        print *, "x(", i, ") =", x(i)
-    end do
-
+    if (iter/=len) then
+        write(*, *) "la solució al teu sistema és:"
+        do i = 1, n
+            print *, "x(", i, ") =", x(i)
+        end do
+    end if 
 
 end program jacobi
