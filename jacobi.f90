@@ -6,10 +6,10 @@ program jacobi
     real, parameter :: tolerancia=1.0e-9
 
         
-    b= [2,3,-1] !escriu el vector del terme independent, b    
-    A = reshape([10,-1,9, &
+    b= [28,938,-1] !escriu el vector del terme independent, b    
+    A = reshape([0,-1,192, &
                  -1,5,4, &
-                 1,2,7], [n, n])!definim la matriu A
+                 1,2,89], [n, n])!definim la matriu A
 
     x= [0.0, 0.0, 0.0] !suposició inicial per x
     x_1= [0.0,0.0,0.0]
@@ -35,7 +35,7 @@ program jacobi
             exit
         end if
         if (iter==len) then
-            print*, "no ha convergit"
+            print*, "no ha convergit ): sap greu tant jove"
             stop 
         end if
         
