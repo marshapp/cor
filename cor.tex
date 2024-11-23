@@ -30,7 +30,7 @@
 
 \author{\begin{tabular}{c}
 \textbf{GRUP C3} \\
-Isaac) \\
+Isaac \\
 Marcel López Freixes (1668323) \\
 Eira \\
 Núria Castillo Ariño (1669145)
@@ -94,6 +94,41 @@ Seguint la solució de proposada a l'annex del guió amb $q(x,t)=1$ i $\beta=\ha
 \section{Solucio numèrica: Euler explicit}
 
 Per aplicar el mètode numèric d'euler explicit
+
+\begin{equation}
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^{n+1} - \hat{T}_j^n}{\Delta \hat{t}} \ .
+    \label{derivada per la dreta}
+\end{equation}
+
+\begin{equation}
+    \frac{\delta^2 \hat{T}}{\delta \hat{z}^2} = \frac{\hat{T}_{j+1}^n - 2\hat{T}_{j}^n + \hat{T}_{j-1}^n}{\Delta \hat{z}^2}
+    \label{2a derivada espaial}
+\end{equation}
+
+\section{Euler implícit}
+En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra. Aquesta última ve donada per l'expressió següent:
+\begin{equation}
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^n - \hat{T}_j^{n-1}}{\Delta \hat{t}} \ .
+    \label{derivada per lesquerra}
+\end{equation}
+
+Substituint les aproximacions de les derivades corresponentment a l'equació diferencial i aïllant $\hat{T}_j^n$, s'obté:
+\begin{equation}
+    \hat{T}_j^n = \frac{\gamma \left( \hat{T}_{j+1}^n + \hat{T}_{j-1}^n \right) + \hat{T}_j^{n-1} + \Delta \hat{t}}{1 + 2\gamma}
+    \label{Tnj implicit} \ .
+\end{equation}
+
+A la part dreta de la igualtat apareixen temperatures en el pas temporal $n$. Per tant, no és possible aïllar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors.  Així doncs, efectivament l'equació és implícita. 
+
+Per les condicions inicials i de contorn, les temperatures en $j=1$, $j=N$ i $n=1$ no són variables sinó valors ja coneguts. Concretament, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$. Així doncs, per a $j=2$ i $j=N-1$ cal utilitzar expressions modificades:
+\begin{align}
+    \hat{T}_2^n = \frac{\gamma \hat{T}_3^n + \beta(\gamma+1)+\Delta\hat{t}}{2\gamma+1} \ ; \label{T_2^n implicit} \\
+    \hat{T}_{N-1}^n = \frac{\gamma \hat{T}_{N-2}^n + \beta(\gamma+1)+\Delta\hat{t}}{2\gamma+1} \ . \label{T_N-1^n implicit}
+\end{align}
+
+La resolució numèrica d'aquest problema es planteja com un sistema d'equacions algebraiques que cal resoldre iterativament en cada pas temporal $n$. Partint de les condicions inicials, es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+
+El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'l, utilitzem el mètode iteratiu de Gauss-Seidel.
 
 
 \end{document}
