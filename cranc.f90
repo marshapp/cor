@@ -1,14 +1,14 @@
 Program cranc
 
-   
+    implicit none(type, external)
     integer,parameter :: N=101
-    real, parameter :: Az =1.0/(N-1), Tc = 36.5, cv = 3686, r = 1081, k=0.56, s=0.472, v=40,  L=0.02, A_z=0.49
+    real, parameter :: Az =1.0/(N-1), Tc = 36.5, cv = 3686, r = 1081, k=0.56, s=0.472, v=40,  L=0.02, A_z=0.25
     real,parameter :: At= A_z*(Az**2)
     integer,parameter :: c=int(0.025/At)
     real,parameter :: p = (s*v**2)/(2*L**2)
     real, parameter :: alpha = k/(cv*r)
     real,parameter :: beta=p/(r*cv)
-    real,parameter :: Tc_n=(Tc*alpha)/(beta*L)
+    real,parameter :: Tc_n=(Tc*alpha)/(beta*L**2)
     
     integer, parameter :: len=1000
     real :: A(n-1,n-1), b(n-1), x(n-1,0:c), x_1(n-1,0:c)
@@ -88,14 +88,27 @@ Program cranc
     open(unit=10, file="cranc_data.txt", status="replace")   
     do i = 1, n-1
            
-        write(10, '(F10.6, 1X, F10.6)') Az+(i*Az), x(i,c)*r*cv/p
+        write(10, '(F10.6, 1X, F10.6)') Az*l+(i*Az)*l, x(i,c)*((beta*(l**2))/alpha) 
     end do
 
 
     close(10)
 
+    open(unit=11, file="camp.txt", status="replace")   
+    do i = 1, n-1
+        do j=1,c
+           write(11, '(F10.6, 1X, F10.6, 1X, F10.6)') Az*l+(i*Az)*l, j*At, x(i,j)*((beta*(l**2))/alpha) 
+        end do
+        write(11,*)
+    end do
 
-    write(*, *)  x(:,c)*((beta*l)/alpha) 
+
+    close(11)
+
+    
+
+
+    write(*, *)  x(:,c)*((beta*(l**2))/alpha) 
 end program cranc
 
 
