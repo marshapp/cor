@@ -32,11 +32,11 @@
 \textbf{GRUP C3} \\
 Isaac \\
 Marcel López Freixes (1668323) \\
-Eira \\
+Eira Jacas García (1666616) \\
 Núria Castillo Ariño (1669145)
 \end{tabular}}
 
-\date{DIA???}
+\date{02/12/2024}
 
 \begin{document}
 
@@ -130,5 +130,15 @@ La resolució numèrica d'aquest problema es planteja com un sistema d'equacions
 
 El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'l, utilitzem el mètode iteratiu de Gauss-Seidel.
 
+\section{Solució: numèrica: mètode Crank-Nicolson}
+En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{derivada per la dreta} i la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal. Aquesta dona l'expressió següent:
+\begin{equation}
+    \a
+    \label{discretitzacio crank}
+\end{equation}
+
+La resolució numèrica d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $a$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+
+El sistema es pot expressar en forma matricial per a cada pas $a$. Per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
 
 \end{document}
