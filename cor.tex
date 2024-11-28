@@ -5,7 +5,10 @@
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{multirow}
+\usepackage{subcaption}
 \usepackage{booktabs}
+\usepackage{bookmark}
+\usepackage{graphicx}
 \usepackage{setspace}
 \setlength{\parindent}{0in}
 \usepackage{physics}
@@ -95,5 +98,121 @@ Seguint la solució de proposada a l'annex del guió amb $q(x,t)=1$ i $\beta=\ha
 
 Per aplicar el mètode numèric d'euler explicit
 
+\begin{equation}
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^{n+1} - \hat{T}_j^n}{\Delta \hat{t}} \ .
+    \label{derivada per la dreta}
+\end{equation}
+
+\begin{equation}
+    \frac{\delta^2 \hat{T}}{\delta \hat{z}^2} = \frac{\hat{T}_{j+1}^n - 2\hat{T}_{j}^n + \hat{T}_{j-1}^n}{\Delta \hat{z}^2}
+    \label{2a derivada espaial}
+\end{equation}
+
+\section{Euler implícit}
+En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra. Aquesta última ve donada per l'expressió següent:
+\begin{equation}
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^n - \hat{T}_j^{n-1}}{\Delta \hat{t}} \ .
+    \label{derivada per lesquerra}
+\end{equation}
+
+Substituint les aproximacions de les derivades corresponentment a l'equació diferencial i aïllant $\hat{T}_j^n$, s'obté:
+\begin{equation}
+    \hat{T}_j^n = \frac{\gamma \left( \hat{T}_{j+1}^n + \hat{T}_{j-1}^n \right) + \hat{T}_j^{n-1} + \Delta \hat{t}}{1 + 2\gamma}
+    \label{Tnj implicit} \ .
+\end{equation}
+
+A la part dreta de la igualtat apareixen temperatures en el pas temporal $n$. Per tant, no és possible aïllar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors.  Així doncs, efectivament l'equació és implícita. 
+
+Per les condicions inicials i de contorn, les temperatures en $j=1$, $j=N$ i $n=1$ no són variables sinó valors ja coneguts. Concretament, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$. Així doncs, per a $j=2$ i $j=N-1$ cal utilitzar expressions modificades:
+\begin{align}
+    \hat{T}_2^n = \frac{\gamma \hat{T}_3^n + \beta(\gamma+1)+\Delta\hat{t}}{2\gamma+1} \ ; \label{T_2^n implicit} \\
+    \hat{T}_{N-1}^n = \frac{\gamma \hat{T}_{N-2}^n + \beta(\gamma+1)+\Delta\hat{t}}{2\gamma+1} \ . \label{T_N-1^n implicit}
+\end{align}
+
+La resolució numèrica d'aquest problema es planteja com un sistema d'equacions algebraiques que cal resoldre iterativament en cada pas temporal $n$. Partint de les condicions inicials, es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+
+El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'l, utilitzem el mètode iteratiu de Gauss-Seidel.
+
+\section{Solució numèrica: mètode Crank-Nicolson}
+En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{eq: derivada per la dreta} i la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal. Aquesta dona l'expressió següent:
+\begin{equation}
+    \a
+    \label{discretitzacio crank}
+\end{equation}
+
+La resolució numèrica d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $a$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+
+El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
+
+\begin{equation}
+    \a
+    \label{matriu crank}
+\end{equation}
+
+Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
+
+INTRODUIR GRÀFICS ERROR CRANC VS ANALITCA PER DIFERENTS TAMANY At
+
+En els gràfics podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit?...MIRAR GRÀFIC.
+Això és perquè... PENSAR!
+
+El càlcul de l'error absolut també ens serveix per comparar-ho amb els altres dos mètodes numèrics que hem utilitzat.
+
+INTRODUIR GRÀFICS ERRORS MÈTODES NUMERICS VS ANALITICA
+
+Si ho comparem amb el mètode d'Euler explícit...SEGUIR
+
+D'altra banda, comparat amb el mètode d'Euler implícit... SEGUIR
+
+
+\section{Millora del model}
+
+UNA IDEA (Eira): podriem considerar no constant la conductivitat tèrmica, ja que aquesta depen de la temperatura (vist a FTS)...SEGUIR
+
+
+\section{Animació}
+Un cop teniem els mètodes implementats hem representat els resultats amb un gif on es pot veure l'evolució del camp de temperatura en dues dimencions al llarg del temps. El nostre problema només depèn d'una dimenció espaial però per fer el gif més representatiu del sistema d'electrodes que narra el problema, hem extès el camp de temperatures a una segona dimenció espaial. 
+Per generara el gif primer hem calculat el camp de temperatures en 100 temps equiespaiats i hem convertit aquestes dades en 100 fitxers txt. En segon lloc, hem plotejat les dades d'aquests fitxers amb una rutina de gnuplot obtenint 100 fotogrames. Per últim amb el programa ImageMagick hem seqüenciat els fotogrames per generar el gif.
+En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hauria els electrodes, la temperatura es manté a la temperatura corporal i, en canvi, al mig, on hi hauria el teixit malalt, la temperatura va augmentant amb el temps.
+
+
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frame_000.png}
+        \caption{frame 1}
+    \end{subfigure}%
+    \hspace{0.001\textwidth}%
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frame_050.png}
+        \caption{frame 50}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frame_100.png}
+        \caption{frame 100}
+    \end{subfigure}
+
+    \caption{Tres frames representatius del gif.}
+    \label{fig:dues_imatges}
+\end{figure}
+
+\end{document}
+
+
+
+
+
+
+\section{Crank-Nicolson}
+En mètode de Crank-Nicolson la derivada temporal de l'Eq. \eqref{eq: eq_normalitzada} s'aproxima igual que en el mètode d'Euler explícit, en canvi per calcular la segona derivada espaial es fa la mitjana de les segones derivades numèriques en el temps t i en el temps t+1 de la següent manera:
+
+\begin{equation}
+\frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
+\end{equation}
 
 \end{document}
