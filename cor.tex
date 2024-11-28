@@ -151,7 +151,24 @@ El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldr
 
 Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
 
-INTRODUIR GRÀFICS ERROR CRANC VS ANALITCA PER DIFERENTS TAMANY At
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{errcranc2plots.png}
+        \caption{Crank-Nicolson dt = dx^2}
+    \end{subfigure}%
+    \hspace{0.001\textwidth}%
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{errcranc2met.png}
+        \caption{Crank-Nicolson dt = 0.5*dx^2}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+
+    \caption{Gràfics Error numèric Crank Nicolson.}
+    \label{fig:dues_imatges}
+\end{figure}
 
 En els gràfics podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit?...MIRAR GRÀFIC.
 Això és perquè... PENSAR!
