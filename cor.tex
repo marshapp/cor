@@ -5,8 +5,10 @@
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{multirow}
+\usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{bookmark}
+\usepackage{graphicx}
 \usepackage{setspace}
 \setlength{\parindent}{0in}
 \usepackage{physics}
@@ -169,6 +171,41 @@ UNA IDEA (Eira): podriem considerar no constant la conductivitat tèrmica, ja qu
 
 
 \section{Animació}
+Un cop teniem els mètodes implementats hem representat els resultats amb un gif on es pot veure l'evolució del camp de temperatura en dues dimencions al llarg del temps. El nostre problema només depèn d'una dimenció espaial però per fer el gif més representatiu del sistema d'electrodes que narra el problema, hem extès el camp de temperatures a una segona dimenció espaial. 
+Per generara el gif primer hem calculat el camp de temperatures en 100 temps equiespaiats i hem convertit aquestes dades en 100 fitxers txt. En segon lloc, hem plotejat les dades d'aquests fitxers amb una rutina de gnuplot obtenint 100 fotogrames. Per últim amb el programa ImageMagick hem seqüenciat els fotogrames per generar el gif.
+En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hauria els electrodes, la temperatura es manté a la temperatura corporal i, en canvi, al mig, on hi hauria el teixit malalt, la temperatura va augmentant amb el temps.
+
+
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frame_000.png}
+        \caption{frame 1}
+    \end{subfigure}%
+    \hspace{0.001\textwidth}%
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frame_050.png}
+        \caption{frame 50}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frame_100.png}
+        \caption{frame 100}
+    \end{subfigure}
+
+    \caption{Tres frames representatius del gif.}
+    \label{fig:dues_imatges}
+\end{figure}
+
+\end{document}
+
+
+
+
 
 
 \section{Crank-Nicolson}
