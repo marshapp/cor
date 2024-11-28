@@ -1,1 +1,0 @@
-!hola no se que estic fent ben be
