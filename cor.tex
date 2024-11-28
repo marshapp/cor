@@ -131,8 +131,8 @@ La resolució numèrica d'aquest problema es planteja com un sistema d'equacions
 
 El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'l, utilitzem el mètode iteratiu de Gauss-Seidel.
 
-\section{Solució: numèrica: mètode Crank-Nicolson}
-En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{derivada per la dreta} i la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal. Aquesta dona l'expressió següent:
+\section{Solució numèrica: mètode Crank-Nicolson}
+En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{eq: derivada per la dreta} i la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal. Aquesta dona l'expressió següent:
 \begin{equation}
     \a
     \label{discretitzacio crank}
@@ -140,7 +140,36 @@ En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{
 
 La resolució numèrica d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $a$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
 
-El sistema es pot expressar en forma matricial per a cada pas $a$. Per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
+El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
+
+\begin{equation}
+    \a
+    \label{matriu crank}
+\end{equation}
+
+Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
+
+INTRODUIR GRÀFICS ERROR CRANC VS ANALITCA PER DIFERENTS TAMANY At
+
+En els gràfics podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit?...MIRAR GRÀFIC.
+Això és perquè... PENSAR!
+
+El càlcul de l'error absolut també ens serveix per comparar-ho amb els altres dos mètodes numèrics que hem utilitzat.
+
+INTRODUIR GRÀFICS ERRORS MÈTODES NUMERICS VS ANALITICA
+
+Si ho comparem amb el mètode d'Euler explícit...SEGUIR
+
+D'altra banda, comparat amb el mètode d'Euler implícit... SEGUIR
+
+
+\section{Millora del model}
+
+UNA IDEA (Eira): podriem considerar no constant la conductivitat tèrmica, ja que aquesta depen de la temperatura (vist a FTS)...SEGUIR
+
+
+\section{Animació}
+
 
 \section{Crank-Nicolson}
 En mètode de Crank-Nicolson la derivada temporal de l'Eq. \eqref{eq: eq_normalitzada} s'aproxima igual que en el mètode d'Euler explícit, en canvi per calcular la segona derivada espaial es fa la mitjana de les segones derivades numèriques en el temps t i en el temps t+1 de la següent manera:
