@@ -158,29 +158,23 @@ El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldr
         \hat{T}_{j=1}^{n+1} \\
         \hat{T}_{j=2}^{n+1} \\
         \vdots \\
+        \hat{T}_{j=N-2}^{n+1} \\
         \hat{T}_{j=N-1}^{n+1} \\
     \end{pmatrix}
     =
     \begin{pmatrix}
-    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
-    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
-    & \\
-    \vdots & \vdots & & \ddots & & \vdots \\
-    & \\
-    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
-    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
-    \end{pmatrix}
-    \begin{pmatrix}
-        \hat{T}_{j=1}^{n} \\
-        \hat{T}_{j=2}^{n} \\
+        f_{j=1} \\
+        f_{j=2} \\
         \vdots \\
-        \hat{T}_{j=N-1}^{n} \\
+        f_{j=N-2} \\
+        f_{j=N-1} \\
     \end{pmatrix}
 
 \end{equation}
 
-\begin{equation}
-
+on 
+\begin{equation} 
+    f = \frac{\gamma}{2}\hat{T}_{j+1}^{n} + (\gamma - {1})\hat{T}_{j}^{n} + \frac{\gamma}{2}\hat{T}_{j-1}^{n} + \Delta{t}
 \end{equation}
 
 Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
@@ -218,7 +212,7 @@ D'altra banda, comparat amb el mètode d'Euler implícit... SEGUIR
 
 \section{Millora del model}
 
-UNA IDEA (Eira): podriem considerar no constant la conductivitat tèrmica, ja que aquesta depen de la temperatura (vist a FTS)...SEGUIR
+
 
 
 \section{Animació}
@@ -234,8 +228,8 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
         \centering
         \includegraphics[width=\textwidth]{frame_000.png}
         \caption{frame 1}
-    \end{subfigure}%
-    \hspace{0.001\textwidth}%
+    \end{subfigure}
+    \hspace{0.01\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{frame_050.png}
