@@ -6,6 +6,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{multirow}
 \usepackage{booktabs}
+\usepackage{bookmark}
 \usepackage{setspace}
 \setlength{\parindent}{0in}
 \usepackage{physics}
@@ -140,5 +141,12 @@ En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{
 La resolució numèrica d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $a$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
 
 El sistema es pot expressar en forma matricial per a cada pas $a$. Per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
+
+\section{Crank-Nicolson}
+En mètode de Crank-Nicolson la derivada temporal de l'Eq. \eqref{eq: eq_normalitzada} s'aproxima igual que en el mètode d'Euler explícit, en canvi per calcular la segona derivada espaial es fa la mitjana de les segones derivades numèriques en el temps t i en el temps t+1 de la següent manera:
+
+\begin{equation}
+\frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
+\end{equation}
 
 \end{document}
