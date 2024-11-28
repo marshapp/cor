@@ -5,7 +5,6 @@ set key bottom right
 set xrange[0:0.02]
 set yrange[0:0.0035]
 
-
 set output 'errcranc2plots.png'
 set xlabel 'z(m)/L'
 set ylabel 'error absolut'
