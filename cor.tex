@@ -35,7 +35,7 @@
 \textbf{GRUP C3} \\
 Isaac Baldi\\
 Marcel López Freixes (1668323) \\
-Eira Jacas\\
+Eira Jacas García (1666616) \\
 Núria Castillo Ariño (1669145)
 \end{tabular}}
 
@@ -145,8 +145,42 @@ La resolució numèrica d'aquest problema també es planteja com un sistema d'eq
 El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
 
 \begin{equation}
-    \a
-    \label{matriu crank}
+  \begin{pmatrix}
+    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
+    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
+    & \\
+    \vdots & \vdots & & \ddots & & \vdots \\
+    & \\
+    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
+    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \hat{T}_{j=1}^{n+1} \\
+        \hat{T}_{j=2}^{n+1} \\
+        \vdots \\
+        \hat{T}_{j=N-1}^{n+1} \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
+    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
+    & \\
+    \vdots & \vdots & & \ddots & & \vdots \\
+    & \\
+    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
+    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \hat{T}_{j=1}^{n} \\
+        \hat{T}_{j=2}^{n} \\
+        \vdots \\
+        \hat{T}_{j=N-1}^{n} \\
+    \end{pmatrix}
+
+\end{equation}
+
+\begin{equation}
+
 \end{equation}
 
 Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
@@ -156,13 +190,13 @@ Per veure com d'eficient/útil és aquest mètode, compararem la solució analí
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{errcranc2plots.png}
-        \caption{Crank-Nicolson dt = dx^2}
+        \caption{error numèric de Crank-Nicolson per diferents mallats}
     \end{subfigure}%
-    \hspace{0.001\textwidth}%
+    \hspace{0.01\textwidth}%
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{errcranc2met.png}
-        \caption{Crank-Nicolson dt = 0.5*dx^2}
+        \includegraphics[width=\textwidth]{errcranc3met.png}
+        \caption{error dels 3 mètodes numèrics utilitzats per un mateix mallat}
     \end{subfigure}
     \hspace{0.01\textwidth}
 
