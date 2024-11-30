@@ -48,7 +48,7 @@ Núria Castillo Ariño (1669145)
 \section{Introducció}
 
 
-Tenim 
+En aquesta pràctica hem solucionat numèricament l'equació de difusió de la calor amb una font d'energia externa. El problema es contextualitza en l'ablació cardíaca, que es una cirurgia simple que es basa en escalfar el teixit biològic entre els ventricles del cor amb dos elèctrodes de polaritats oposades. Les condicions perquè el mètode sigui efectiu són que cap regió pot sobrepassar els 80ºC i que la regió de teixit sa no superi els 50ºC, quan comença la mort cel·lular. Nosaltres ens proposem trobar el temps màxim que podem aplicar un potencial de 40V entre els elèctrodes sense trencar aquestes condicions. Per fer-ho provarem tres mètodes numèrics diferents: Euler explícit, Euler implícit i Crank-Nicolson i en compararem els errors per decidir quin es millor per solucionar el problema.
 
 \begin{equation}
     c_v \rho \frac{\partial T}{\partial t} = \nabla \cdot (\kappa \nabla T) + P_{\text{ext}}
@@ -137,7 +137,7 @@ El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'
 En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{eq: derivada per la dreta} i la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal. Aquesta dona l'expressió següent:
 \begin{equation}
     \a
-    \label{discretitzacio crank}
+    \label{}
 \end{equation}
 
 La resolució numèrica d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $a$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
@@ -145,8 +145,8 @@ La resolució numèrica d'aquest problema també es planteja com un sistema d'eq
 El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
 
 \begin{equation}
-    \a
-    \label{matriu crank}
+    \frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
+    \label{crank}
 \end{equation}
 
 Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
@@ -184,7 +184,7 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
         \includegraphics[width=\textwidth]{frame_000.png}
         \caption{frame 1}
     \end{subfigure}%
-    \hspace{0.001\textwidth}%
+    \hspace{0.01\textwidth}%
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{frame_050.png}
@@ -201,6 +201,8 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
     \label{fig:dues_imatges}
 \end{figure}
 
+Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
+
 \end{document}
 
 
@@ -211,8 +213,8 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
 \section{Crank-Nicolson}
 En mètode de Crank-Nicolson la derivada temporal de l'Eq. \eqref{eq: eq_normalitzada} s'aproxima igual que en el mètode d'Euler explícit, en canvi per calcular la segona derivada espaial es fa la mitjana de les segones derivades numèriques en el temps t i en el temps t+1 de la següent manera:
 
-\begin{equation}
-\frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
-\end{equation}
+
+
+
 
 \end{document}
