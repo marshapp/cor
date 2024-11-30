@@ -35,7 +35,7 @@
 \textbf{GRUP C3} \\
 Isaac Baldi\\
 Marcel López Freixes (1668323) \\
-Eira Jacas\\
+Eira Jacas García (1666616) \\
 Núria Castillo Ariño (1669145)
 \end{tabular}}
 
@@ -134,40 +134,89 @@ La resolució numèrica d'aquest problema es planteja com un sistema d'equacions
 El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'l, utilitzem el mètode iteratiu de Gauss-Seidel.
 
 \section{Solució numèrica: mètode Crank-Nicolson}
-En aquest mètode numèric es discretitza la derivada temporal com l'Eq. \eqref{eq: derivada per la dreta} i la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal. Aquesta dona l'expressió següent:
+
+En aquest mètode numèric la discretització de la derivada temporal s'aproxima com en el mètode d'Euler explícit, l'Eq. \eqref{eq: derivada per la dreta}. En canvi, la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal:
+
+\begin{equation}
+    \frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
+    \label{mitjana segones derivades espacials}
+\end{equation}
+
+I ens acaba resultat l'expressió següent:
 \begin{equation}
     \a
     \label{}
 \end{equation}
 
-La resolució numèrica d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $a$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+La resolució d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $\hat{T}_j^n$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
 
-El sistema es pot expressar en forma matricial per a cada pas $a$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
+El sistema es pot expressar en forma matricial per a cada pas $\hat{T}_j^n$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
 
 \begin{equation}
-    \frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
-    \label{crank}
+  \begin{pmatrix}
+    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
+    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
+    & \\
+    \vdots & \vdots & & \ddots & & \vdots \\
+    & \\
+    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
+    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \hat{T}_{j=1}^{n+1} \\
+        \hat{T}_{j=2}^{n+1} \\
+        \vdots \\
+        \hat{T}_{j=N-2}^{n+1} \\
+        \hat{T}_{j=N-1}^{n+1} \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        f_{j=1} +\frac{\gamma}{2}\hat{T}_{c} \\
+        f_{j=2} \\
+        \vdots \\
+        f_{j=N-2} \\
+        f_{j=N-1} +\frac{\gamma}{2}\hat{T}_{c} \\
+    \end{pmatrix}
 \end{equation}
 
-Per veure com d'eficient/útil és aquest mètode, compararem la solució analítica i la numèrica per a cada pas del mallat espacial per al temps 'ta' especificada en l'enunciat. Calculem l'error absolut entre les temperatures.
+on $f = \frac{\gamma}{2}\hat{T}_{j+1}^{n} + (\gamma - {1})\hat{T}_{j}^{n} + \frac{\gamma}{2}\hat{T}_{j-1}^{n} + \Delta\hat{t}$
 
-INTRODUIR GRÀFICS ERROR CRANC VS ANALITCA PER DIFERENTS TAMANY At
+Per veure l'eficiència d'aquest mètode, compararem la solució analítica i la numèrica per a cada pas del 
+mallat espacial per al temps $t_a = 0.025$ especificada en l'enunciat. Calculem l'error absolut entre les 
+temperatures, que també ens servirà per comparar amb els altres dos mètodes numèrics que hem utilitzat.
 
-En els gràfics podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit?...MIRAR GRÀFIC.
-Això és perquè... PENSAR!
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{errcranc3gamma.png}
+        \caption{error numèric de Crank-Nicolson per diferents mallats}
+    \end{subfigure}%
+    \hspace{0.01\textwidth}%
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{errtemp3met.png}
+        \caption{error dels 3 mètodes numèrics utilitzats per un mateix mallat}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
 
-El càlcul de l'error absolut també ens serveix per comparar-ho amb els altres dos mètodes numèrics que hem utilitzat.
+    \caption{Gràfics Error numèric Crank Nicolson.}
+    \label{fig:dues_imatges}
+\end{figure}
+!!!!FALTA INCLOURE ERROR IMPLICIT, GP FET FALTA TENIR LES DADES EN TXT
 
-INTRODUIR GRÀFICS ERRORS MÈTODES NUMERICS VS ANALITICA
+Observant el gràfic de l'esquerra podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. 
+També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit. 
+Això és perquè estem fent passos més petits en la discretització del temps. 
+Al reduir el tamany dels passos ens apropem cada vegada més a la definició de diferencial i,per tant, l'equació discretitzada s'aproxima millor a l'equació diferencial que volem resoldre.
 
-Si ho comparem amb el mètode d'Euler explícit...SEGUIR
-
-D'altra banda, comparat amb el mètode d'Euler implícit... SEGUIR
-
+D'altra banda gràfics de la dreta, notem que la diferència de temperatura que presenta la solució numèrica de Crank és més gran que la que presenten els altres mètodes numèrics (Euler explícit i Euler implícit). 
+La diferència entre el mètodes numèrics és el tipus de discretització que fem per a les derivades de l'equació diferencial. Així doncs, veiem que per aquest problema i per aquest interval d'espai i temps, aproximar la derivada segona com la mitjana de ens porta a una solució que s'allunya més de la solució analítica. 
+Això podria ser perquè...SEGUIR
 
 \section{Millora del model}
 
-UNA IDEA (Eira): podriem considerar no constant la conductivitat tèrmica, ja que aquesta depen de la temperatura (vist a FTS)...SEGUIR
+
 
 
 \section{Animació}
@@ -183,8 +232,8 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
         \centering
         \includegraphics[width=\textwidth]{frame_000.png}
         \caption{frame 1}
-    \end{subfigure}%
-    \hspace{0.01\textwidth}%
+    \end{subfigure}
+    \hspace{0.01\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{frame_050.png}
@@ -204,17 +253,5 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
 Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
 
 \end{document}
-
-
-
-
-
-
-\section{Crank-Nicolson}
-En mètode de Crank-Nicolson la derivada temporal de l'Eq. \eqref{eq: eq_normalitzada} s'aproxima igual que en el mètode d'Euler explícit, en canvi per calcular la segona derivada espaial es fa la mitjana de les segones derivades numèriques en el temps t i en el temps t+1 de la següent manera:
-
-
-
-
 
 \end{document}

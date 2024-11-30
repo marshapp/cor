@@ -87,11 +87,10 @@ implicit none(type, external)
         end do
     end do   
 
-    open(unit=13, file="cranc_error.txt", status="replace")   
+    open(unit=13, file="cranc_error025.txt", status="replace")   
     do w = 0, N
-        !escriu: Az, Az/l, Temp(Az,t=c) funcio analitica(N=1000), Temp(Az,t=c) cranc, error absolut
-        write(13, *) (w*Az)*l, (w*Az), f(len, w*Az), x(w,c)*((beta*(l**2))/alpha), abs(f(len, w*Az)-x(w,c)*((beta*(l**2))/alpha))
-        
+        !escriu: Az, error absolut per un A_z concret
+        write(13, *) (w*Az)*l, abs(f(len, w*Az)-x(w,c)*((beta*(l**2))/alpha))
     end do
 
     close(13)

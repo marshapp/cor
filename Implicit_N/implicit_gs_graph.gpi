@@ -1,0 +1,12 @@
+set key bottom right
+
+set style line 1 lc rgb "blue" lw 2 lt 1 pt 7 ps 1
+set style line 2 lc rgb "green" lw 2 lt 1 pt 7 ps 1
+
+set xrange[0:0.0202]
+set yrange[36:54]
+
+set xlabel "Posicio (m)"
+set ylabel "Temperatura (°C)"
+
+plot "data_implicit_gs.dat" u 1:2 w l ls 1 t "Gauss-Seidel", "data_implicit_gs.dat" u 1:2 w l ls 2 t "Solucio analitica"
