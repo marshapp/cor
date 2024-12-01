@@ -29,17 +29,16 @@
 \usepackage{listings}
 
 
-\title{\Huge\bfseries Cor:Cor \\[1ex] \Large}
+\title{\Huge\bfseries Pràctica 1: Modelització del tractament d’ablació cardíaca IVS \\[1ex] \Large}
 
 \author{\begin{tabular}{c}
-\textbf{GRUP C3} \\
-Isaac Baldi\\
-Marcel López Freixes (1668323) \\
 Eira Jacas García (1666616) \\
+Isaac Baldi (NIU) \\
+Marcel López Freixes (1668323) \\
 Núria Castillo Ariño (1669145)
 \end{tabular}}
 
-\date{data}
+\date{}
 
 \begin{document}
 
@@ -48,65 +47,107 @@ Núria Castillo Ariño (1669145)
 \section{Introducció}
 
 
-En aquesta pràctica hem solucionat numèricament l'equació de difusió de la calor amb una font d'energia externa. El problema es contextualitza en l'ablació cardíaca, que es una cirurgia simple que es basa en escalfar el teixit biològic entre els ventricles del cor amb dos elèctrodes de polaritats oposades. Les condicions perquè el mètode sigui efectiu són que cap regió pot sobrepassar els 80ºC i que la regió de teixit sa no superi els 50ºC, temperatura a la qual comença la mort cel·lular. Nosaltres ens proposem trobar el temps màxim que podem aplicar un potencial de 40V entre els elèctrodes sense trencar aquestes condicions. Per fer-ho provarem tres mètodes numèrics diferents: Euler explícit, Euler implícit i Crank-Nicolson i en compararem els errors per decidir quin es millor per solucionar el problema.
+En aquesta pràctica hem solucionat numèricament l'equació de difusió de la calor amb una font de calor externa. El problema es contextualitza en l'ablació cardíaca, que es una tractament mèdic que es basa en escalfar per efecte Joule el teixit biològic entre els ventricles del cor amb dos elèctrodes de polaritats oposades. Les condicions per a que el mètode sigui eficient són que cap regió pot sobrepassar els 80 $^\circ$C, per evitar trombosis, i que la regió de teixit sa no superi els 50 $^\circ$C, quan comença la mort cel·lular. El nostre objectiu és trobar el temps màxim que podem aplicar una senyal de 40 V sense trencar aquestes condicions. Per fer-ho, estudiarem tres mètodes numèrics diferents: Euler explícit, Euler implícit i Crank-Nicolson i en compararem els errors numèrics amb la solució analítica per determinar quin es millor per solucionar el problema.
+
+\section{Modelització del problema} 
+
+L'equació diferencial que caracteritza el problema és
 
 \begin{equation}
-    c_v \rho \frac{\partial T}{\partial t} = \nabla \cdot (\kappa \nabla T) + P_{\text{ext}}
+    c_v \rho \frac{\partial T}{\partial t} = \nabla(\kappa \nabla T) + P_{\text{ext}} \ ,
 \label{eq: eq_inicial}
 \end{equation}
 
+on $P_{ext}$ representa la calor aportada al sistema per efecte Joule per unitat de temps i de volum. 
 
-Si simplifiquem el sistema un espai cilíndricament simètric, ens queda
-
+Si simplifiquem el sistema a un espai cilíndricament simètric, ens queda que
 
 \begin{equation}
-    c_v \rho \frac{\partial T}{\partial t} = \frac{\partial^2 T}{\partial x^2} + P_{\text{ext}}
+    c_v \rho \frac{\partial T}{\partial t} = \frac{\partial^2 T}{\partial x^2} + P_{\text{ext}} \ .
 \label{eq: eq_inicial_cilindriques}
 \end{equation}
-\section{normalització}
 
-Dividint l'eq. \eqref{eq: eq_inicial_cilindriques} per $c_v\rho$ i definint $\lambda=\frac{P_ext}{\rho c_v}$, queda
+Podem trobar el valor de $P_{ext}$ tenint en compte que la potència dissipada per efecte Joule en el cas d'un corrent altern, com el considerat en aquest problema, és $P_{Joule}=\frac{(V_{ef})^2}{R}=\frac{V^2 A \sigma}{2L}$, on A és la secció del cilindre al que hem simplificat el problema. Per tant, dividint pel volum del sistema obtenim que $P_{ext}=\frac{P_{Joule}}{AL}=\frac{V^2 \sigma}{2L^2}$.
+
+\section{Normalització i condicions inicials i de contorn}
+
+Dividint l'eq. \eqref{eq: eq_inicial_cilindriques} per $c_v\rho$ i definint $\lambda=\frac{P_{ext}}{\rho c_v}$, ens queda que
 
 \begin{equation}
-    \frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2} + \lambda \implies \frac{1}{\lambda}\frac{\partial T}{\partial t} = \frac{\alpha}{\lambda} \frac{\partial^2 T}{\partial x^2} + 1
+    \frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2} + \lambda \ ,
 \label{eq: eq_entre_rhocv}
 \end{equation}
 
 on $\alpha=\frac{k}{\rho c_v}$ és la difusivitat tèrmica.
 
-Si definim $\hat{x}=\frac{x}{L}$, $\hat{T}=T \frac{\alpha}{\lambda L^2}$ i $\hat{t}=t\frac{\alpha}{L^2}$, aleshores
+Si dividim tot per $\lambda$ i definim $\hat{x}=\frac{x}{L}$, $\hat{T}=T \frac{\alpha}{\lambda L^2}$ i $\hat{t}=t\frac{\alpha}{L^2}$, aleshores
 
 \begin{equation}
-    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\partial^2 \hat{T}}{\partial \hat{x}^2} + 1
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\partial^2 \hat{T}}{\partial \hat{x}^2} + 1 \ .
 \label{eq: eq_normalitzada}
 \end{equation}
 
+NO ENTENC QUE EM PREGUNTA DE LA NORMALITZACIO
+
+Les condicions de contorn del problema són tals que als extrems del sistema o parets de la porció cilíndirca de teixit considerada, la temperatura es manté constant $T_c=36,5$ $^\circ$C. Pel que fa a les condicions incials, tenim que a $t=0$ s, la temperatura del teixit és $T_c=36,5$ $^\circ$C a tot arreu.
+
 \section{Solució analítica}
 
-
-Seguint la solució de proposada a l'annex del guió amb $q(x,t)=1$ i $\beta=\hat{T}(T_c)$, queda que
-
-
+Utilitzant la solució analítica proporcionada a l'annex del guió amb $q(x,t)=1$, obtenim
 
 \begin{equation}
-    f(\hat{x}, \hat{t}) = \beta + \frac{4}{\pi^3} \sum_{n=1}^{\infty} \frac{1 - e^{-(2n-1)^2 \pi^2 \hat{t}}}{(2n-1)^3} \sin\big((2n-1)\pi \hat{x})
+    f(\hat{x}, \hat{t}) = \beta + \frac{4}{\pi^3} \sum_{n=1}^{\infty} \frac{1 - e^{-(2n-1)^2 \pi^2 \hat{t}}}{(2n-1)^3} \sin\big((2n-1)\pi \hat{x}) \ ,
 \label{eq: analitica}
 \end{equation}
 
+on $\beta=\hat{T}(T_c)$.
 
-\section{Solucio numèrica: Euler explicit}
 
-Per aplicar el mètode numèric d'euler explicit
+\section{Solucio numèrica: mètode d'Euler explicit}
 
-\begin{equation}
-    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^{n+1} - \hat{T}_j^n}{\Delta \hat{t}} \ .
-    \label{derivada per la dreta}
-\end{equation}
+Per aplicar el mètode numèric d'euler explicit utilitzem l'aproximació per la dreta de la primera derivada i la central per la segona, d'aquesta manera, definint $\gamma=\frac{\Delta \hat{t}}{\Delta \hat{x}^2}$, si el superindex és el temporal i el subindex l'espacial, ens queda que 
 
 \begin{equation}
-    \frac{\delta^2 \hat{T}}{\delta \hat{z}^2} = \frac{\hat{T}_{j+1}^n - 2\hat{T}_{j}^n + \hat{T}_{j-1}^n}{\Delta \hat{z}^2}
-    \label{2a derivada espaial}
+        \hat{T}_j^{i+1} = \gamma \left( \hat{T}_{j+1}^i - 2\hat{T}_j^i + \hat{T}_{j-1}^i \right) 
+        + \hat{T}_j^i + \Delta \hat{t} \ ,
+    \label{formuleta explicit}
 \end{equation}
+
+que amb les condicions inicials i de contorn definides, ens permet trobar per cada temps el valor del tamperatura a cada posició a partir de les temperatures trobades al temps anterior.
+
+Si grafiquem les solucions numèriques corresponents a cada valor de $\gamma$ a $\hat{t}=t_a=0,025$, obtenim
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{euler_explicit_51_v2.png}
+        \caption{$\gamma=0,51$}
+    \end{subfigure}%
+    \hspace{0.000001\textwidth}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{euler_explicit_49_25_v2.png}
+        \caption{$\gamma=0.49$ i $\gamma=0,25$}
+    \end{subfigure}
+    \caption{Solució numèrica pel mètode d'Euler explicit pels diferents valors de $\gamma$ a $\hat{t}=t_a=0,025$.}
+    \label{fig:resultats_explicit}
+\end{figure}
+
+on les línies verticals vermelles representen els extrems del teixit malalt.
+
+Podem veure com per $\gamma=0,51$ la solució numèrica no té res a veure amb l'analítica, mentres que per $\gamma=0,49$ i $\gamma=0,25$ la solució numèrica és pràcticament igual a l'analítica. Això és degut a que el mètode d'Euler per l'equació de difusió amb una font d'energia externa només funciona o és estable per a un mallat o discretització tal que $\gamma \le 0,5$.
+
+Pel que fa als errors numèrics de les solucions estables en aquest instant de temps, els representem al següent gràfic:
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{errors_v2.png}  
+    \caption{Errors numèrics de les solucions estables a $\hat{t}=t_a=0,025$.}
+    \label{fig: error_explicit}
+\end{figure}
+
+COMPROVACIONS SI NO CONEIXESSIM LA SOLUCIO ANALITICA
 
 \section{Solució numèrica: mètode d'Euler implícit}
 En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra, que ve donada per l'expressió següent:
@@ -198,10 +239,7 @@ En aquest mètode numèric la discretització de la derivada temporal s'aproxima
 \end{equation}
 
 I ens acaba resultat l'expressió següent:
-\begin{equation}
-    \a
-    \label{}
-\end{equation}
+
 
 La resolució d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $\hat{T}_j^n$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
 
@@ -250,7 +288,7 @@ temperatures, que també ens servirà per comparar amb els altres dos mètodes n
     \hspace{0.01\textwidth}%
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{errtemp3met.png}
+        %\includegraphics[width=\textwidth]{errtemp3met.png}
         \caption{error dels 3 mètodes numèrics utilitzats per un mateix mallat}
     \end{subfigure}
     \hspace{0.01\textwidth}
@@ -306,6 +344,10 @@ Així, hem optat pel mètode de Gauss-Seidel per resoldre el problema, ja que in
 
 \section{Comparació dels mètodes - ho fem???}
 
+\section{Solució al problema}
+
+Tenint en compte doncs que el mètode que millors amb un menor error numèric ha estat el mètode d'Euler explicit amb un mallat tal que $\gamma=0,25$, ens disposem a resoldre el problema amb aquest mètode i mallat. Si ens fixem en la solució numèrica trobada per $\gamma=0,25$ representada a la Fig. \ref{fig:resultats_explicit} (b), veiem com pel temps considerat la zona sana supera els 50 $^\circ$C, és a dir, que el temps que busquem és menor al corresponent a $\hat{t}=t_a=0,025$ i, per tant, peer solucionar el problema és suficient amb utilitzar el codi emprat en aquest cas imposant que en el pas temporal on les condicions que garanteixen l'eficiència del tractament es violin, s'aturi el mètode i es retorni el valor del temps que correspon a aquest pas. Fent això, obtenim un valor pel temps màxim que podem estar fent el tractament sense trencar les condicions que garanteixen la seva eficiència de $t=58,13$ s.
+
 \section{Millora del model}
 
 
@@ -322,19 +364,19 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
     \centering
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{frame_000.png}
+        %\includegraphics[width=\textwidth]{frame_000.png}
         \caption{frame 1}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{frame_050.png}
+        %\includegraphics[width=\textwidth]{frame_050.png}
         \caption{frame 50}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{frame_100.png}
+        %\includegraphics[width=\textwidth]{frame_100.png}
         \caption{frame 100}
     \end{subfigure}
 
@@ -342,8 +384,7 @@ En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hau
     \label{fig:dues_imatges}
 \end{figure}
 
-Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
 
-\end{document}
+Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
 
 \end{document}

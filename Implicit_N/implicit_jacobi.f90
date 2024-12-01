@@ -6,21 +6,23 @@ PROGRAM IVEGOTTHIS
     
     integer, parameter :: N=101 , cv = 3686 , rho = 1081 , V = 40
     real(KIND=DP), parameter :: ta = 0.025, kk = 0.56 , sigma = 0.472 , Tc = 36.5, L = 0.02
-    integer :: i , j , m , rows, steps, scale , data
+    integer :: i , j , m , rows, steps, scale , data , error_data
     real(KIND=DP) :: cond , alpha , beta , pext , gamma , dz , dt , position , mat(1:N-2,1:N-2) , bp(1:N-2), tolerance
     real(KIND=DP), allocatable :: ter(:,:), vecm(:), temperaturesta(:)
+    ! We'll store all the temperature values in ter.
+    ! Every row is a certain time and every column a certain position.
+    ! Its rows are the vectors we'll input in gauss-seidel.
+
 
     !---------
     real(KIND=DP) ::  x(N-2), x_1(N-2)
     integer :: iter
     real(KIND=DP) :: sum, error
-    ! We'll store all the temperature values in ter.
-    ! Every row is a certain time and every column a certain position.
-    ! Its rows are the vectors we'll input in gauss-seidel.
+
     
     scale=1 ! Scale defines relation between dz and dt (see below).
-    tolerance = (10.0_DP)**(-3)! Tolerance we want in G-S method.
-    steps = 1000 ! Max number of steps we allow G-S to take.
+    tolerance = (10.0_DP)**(-7)! Tolerance we want in the method.
+    steps = 1000 ! Max number of steps we allow the method to take.
     
     dz= (1.0_DP) / (N - 1)  ! Use 1.0_DP to force floating-point division.
     dt=(1.0_DP/scale)*(dz**2)
@@ -31,7 +33,7 @@ PROGRAM IVEGOTTHIS
     cond = (Tc*alpha)/(beta*(L**2))
     gamma = dt/(dz**2)
     
-    ! Define the matrix mat.
+    ! Define the matrix mat, which contains the coefficients of the system of equations for each t.
     DO i = 1,N-2
         mat(i, i) = 2 * gamma + 1  ! diag
         IF (i .GE. 2) THEN
@@ -61,23 +63,6 @@ PROGRAM IVEGOTTHIS
     END DO
     
     
-    
-    ! CHECKS
-    write(*,*) 'dz=',dz,'dt=',dt,'gamma=',gamma
-    
-    WRITE(*,*) 'mat'
-    DO i=N-7, N-2
-        WRITE(*,*) mat(i,N-7:N-2)
-    END DO
-    
-    WRITE(*,*) 'ter'
-    DO i=1,6
-        WRITE(*,*) ter(i,1:3),ter(i,N-1:N)
-    END DO
-    
-    
-    
-    
     ! Find temperatures using method.
     DO m = 2,rows
         ! Define the components of bp.
@@ -88,32 +73,29 @@ PROGRAM IVEGOTTHIS
         bp(N-2) = dt + cond*(gamma) + ter(m-1,N-1)
     
         !--------------------------------------JACOBI------------------------------------
-    
+
         x= ter(m-1,2:N-1)! We'll use the vector from the previous step as the
         ! starting point, since it's probably close to the one we want to find.
         
-        print *, "ja estic resolent el teu sistema"
         
         do iter = 1, steps
         
-            x_1= x !la x de l'anterior iteració ara és x_1
-            do i = 1, N-2 !suma per cada x(i) 
-                sum =0
+            x_1 = x ! la x de l'anterior iteració ara és x_1
+            do i = 1, N-2 ! suma per cada x(i) 
+                sum = 0
                 do j = 1, N-2
                     if (j/=i) then
                         sum = sum + mat(i,j)*x_1(j)
                     end if
                 end do 
-                x(i)=(bp(i)-sum)/mat(i,i) !genera la nova x
+                x(i)=(bp(i)-sum)/mat(i,i) ! genera la nova x
             end do
             error = maxval(abs(x - x_1))
     
             if (error < tolerance) then
-                print*, "ha convergit en", iter, "iteracions"
                 exit
             end if
             if (iter==steps) then
-                print*, "no ha convergit ): sap greu tant jove"
                 stop 
             end if
             
@@ -126,15 +108,8 @@ PROGRAM IVEGOTTHIS
 
 
     
-    ! CHECK
-    WRITE(*,*) 'ter resultant'
-    DO i = 1,7
-        WRITE(*,*) ter(i,1:3)
-    END DO
-    WRITE(*,*) 'ultima fila ter = ',  ter(N,1:4)
-    
     ! Create a .txt file in which to put the data we need for the graph.
-    OPEN(NEWUNIT=data, FILE='data_implicit_gs.dat', STATUS='unknown', ACTION='WRITE')
+    OPEN(NEWUNIT=data, FILE='data_implicit_jacobi.dat', STATUS='unknown', ACTION='WRITE')
     
     ! We'll write data for t=ta (which corresponds to last row of ter)
     ! 1st column: positions (z) ; 2nd column: temperatures
@@ -142,18 +117,48 @@ PROGRAM IVEGOTTHIS
     position = 0
     temperaturesta = (ter(rows,:)*(beta*(L**2)))/alpha
     
-    write(*,*) 'ta(1:6): ', temperaturesta(1:6)
-    
     DO i = 1,N
         WRITE(data,*) position , temperaturesta(i)
         position = position+dz*L
     END DO
     
     CLOSE(data)
-    
-    
-    
-    DEALLOCATE(ter)
+
     DEALLOCATE(vecm)
-    DEALLOCATE(temperaturesta)
-    END PROGRAM
+    DEALLOCATE(ter)
+
+    !----------------- Error ----------------
+
+open(NEWUNIT=error_data, file='resultats_error_implicit_jacobi.dat', status='unknown', action='write')
+! We write in error_data the error for each position (en m)
+do j = 0, N-1
+    write(error_data, *) (j*dz)*L , abs( temperaturesta(j+1)-f(300, j*dz) )
+end do
+close(error_data)
+
+
+DEALLOCATE(temperaturesta)
+
+contains
+
+real(KIND=DP) function f(Nf, x_norm)
+implicit none(type, external)
+integer, intent(in) :: Nf
+real(KIND=DP), intent(in) :: x_norm
+real(KIND=DP), parameter :: t_norm=0.025, pi=2*acos(0.0)
+real(KIND=DP) :: sumatori, f_norm
+integer :: k
+
+sumatori=0 
+do k = 1, Nf
+    sumatori = sumatori + ((1-exp(-((2*k-1)**2)*(pi**2)*t_norm))/((2*k-1)**3))*sin((2*k-1)*pi*x_norm)
+end do
+
+f_norm=cond+(4/(pi**3))*sumatori
+f=(f_norm*beta*(L**2))/alpha
+
+end function
+    
+    
+
+END PROGRAM
