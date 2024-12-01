@@ -20,7 +20,7 @@ set yrange[36:54]
 set xlabel "Posicio (m)"
 set ylabel "Temperatura (°C)"
 
-plot "data_implicit_gs.dat" u 1:2 w l ls 1 t "Gauss-Seidel γ=1" , "data_implicit_jacobi.dat" u 1:2 w l ls 2 t "Jacobi γ=1", "data_implicit_gs.dat" u 1:4 w l ls 3 t "Solucio analitica"
+plot "data_implicit_gs.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "data_implicit_jacobi.dat" u 1:2 w l ls 2 t "Jacobi", "data_implicit_gs.dat" u 1:4 w l ls 3 t "Solucio analitica"
 
 set output
 
@@ -36,6 +36,6 @@ set ylabel "ΔT (°C)"
 set xrange[-0.001:0.021]
 set yrange[0:0.1]
 
-plot "resultats_error_implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel γ=1" , "resultats_error_implicit_jacobi.dat" u 1:2 w l ls 2 t "Jacobi γ=1"
+plot "resultats_error_implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "resultats_error_implicit_jacobi.dat" u 1:2 w l ls 2 t "Jacobi"
 
 set output
