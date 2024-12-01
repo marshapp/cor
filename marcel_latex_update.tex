@@ -1,0 +1,390 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{bookmark}
+\usepackage{graphicx}
+\usepackage{setspace}
+\setlength{\parindent}{0in}
+\usepackage{physics}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage[outline]{contour} % glow around text
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{pgfplots}
+\usepackage{amsmath}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage[english,catalan]{babel}
+\setlength{\parskip}{11pt}
+\usepackage{xcolor}
+\usepackage{listings}
+
+
+\title{\Huge\bfseries Pràctica 1: Modelització del tractament d’ablació cardíaca IVS \\[1ex] \Large}
+
+\author{\begin{tabular}{c}
+Eira Jacas García (1666616) \\
+Isaac Baldi (NIU) \\
+Marcel López Freixes (1668323) \\
+Núria Castillo Ariño (1669145)
+\end{tabular}}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducció}
+
+
+En aquesta pràctica hem solucionat numèricament l'equació de difusió de la calor amb una font de calor externa. El problema es contextualitza en l'ablació cardíaca, que es una tractament mèdic que es basa en escalfar per efecte Joule el teixit biològic entre els ventricles del cor amb dos elèctrodes de polaritats oposades. Les condicions per a que el mètode sigui eficient són que cap regió pot sobrepassar els 80 $^\circ$C, per evitar trombosis, i que la regió de teixit sa no superi els 50 $^\circ$C, quan comença la mort cel·lular. El nostre objectiu és trobar el temps màxim que podem aplicar una senyal de 40 V sense trencar aquestes condicions. Per fer-ho, estudiarem tres mètodes numèrics diferents: Euler explícit, Euler implícit i Crank-Nicolson i en compararem els errors numèrics amb la solució analítica per determinar quin es millor per solucionar el problema.
+
+\section{Modelització del problema} 
+
+L'equació diferencial que caracteritza el problema és
+
+\begin{equation}
+    c_v \rho \frac{\partial T}{\partial t} = \nabla(\kappa \nabla T) + P_{\text{ext}} \ ,
+\label{eq: eq_inicial}
+\end{equation}
+
+on $P_{ext}$ representa la calor aportada al sistema per efecte Joule per unitat de temps i de volum. 
+
+Si simplifiquem el sistema a un espai cilíndricament simètric, ens queda que
+
+\begin{equation}
+    c_v \rho \frac{\partial T}{\partial t} = \frac{\partial^2 T}{\partial x^2} + P_{\text{ext}} \ .
+\label{eq: eq_inicial_cilindriques}
+\end{equation}
+
+Podem trobar el valor de $P_{ext}$ tenint en compte que la potència dissipada per efecte Joule en el cas d'un corrent altern, com el considerat en aquest problema, és $P_{Joule}=\frac{(V_{ef})^2}{R}=\frac{V^2 A \sigma}{2L}$, on A és la secció del cilindre al que hem simplificat el problema. Per tant, dividint pel volum del sistema obtenim que $P_{ext}=\frac{P_{Joule}}{AL}=\frac{V^2 \sigma}{2L^2}$.
+
+\section{Normalització i condicions inicials i de contorn}
+
+Dividint l'eq. \eqref{eq: eq_inicial_cilindriques} per $c_v\rho$ i definint $\lambda=\frac{P_{ext}}{\rho c_v}$, ens queda que
+
+\begin{equation}
+    \frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2} + \lambda \ ,
+\label{eq: eq_entre_rhocv}
+\end{equation}
+
+on $\alpha=\frac{k}{\rho c_v}$ és la difusivitat tèrmica.
+
+Si dividim tot per $\lambda$ i definim $\hat{x}=\frac{x}{L}$, $\hat{T}=T \frac{\alpha}{\lambda L^2}$ i $\hat{t}=t\frac{\alpha}{L^2}$, aleshores
+
+\begin{equation}
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\partial^2 \hat{T}}{\partial \hat{x}^2} + 1 \ .
+\label{eq: eq_normalitzada}
+\end{equation}
+
+NO ENTENC QUE EM PREGUNTA DE LA NORMALITZACIO
+
+Les condicions de contorn del problema són tals que als extrems del sistema o parets de la porció cilíndirca de teixit considerada, la temperatura es manté constant $T_c=36,5$ $^\circ$C. Pel que fa a les condicions incials, tenim que a $t=0$ s, la temperatura del teixit és $T_c=36,5$ $^\circ$C a tot arreu.
+
+\section{Solució analítica}
+
+Utilitzant la solució analítica proporcionada a l'annex del guió amb $q(x,t)=1$, obtenim
+
+\begin{equation}
+    f(\hat{x}, \hat{t}) = \beta + \frac{4}{\pi^3} \sum_{n=1}^{\infty} \frac{1 - e^{-(2n-1)^2 \pi^2 \hat{t}}}{(2n-1)^3} \sin\big((2n-1)\pi \hat{x}) \ ,
+\label{eq: analitica}
+\end{equation}
+
+on $\beta=\hat{T}(T_c)$.
+
+
+\section{Solucio numèrica: mètode d'Euler explicit}
+
+Per aplicar el mètode numèric d'euler explicit utilitzem l'aproximació per la dreta de la primera derivada i la central per la segona, d'aquesta manera, definint $\gamma=\frac{\Delta \hat{t}}{\Delta \hat{x}^2}$, si el superindex és el temporal i el subindex l'espacial, ens queda que 
+
+\begin{equation}
+        \hat{T}_j^{i+1} = \gamma \left( \hat{T}_{j+1}^i - 2\hat{T}_j^i + \hat{T}_{j-1}^i \right) 
+        + \hat{T}_j^i + \Delta \hat{t} \ ,
+    \label{formuleta explicit}
+\end{equation}
+
+que amb les condicions inicials i de contorn definides, ens permet trobar per cada temps el valor del tamperatura a cada posició a partir de les temperatures trobades al temps anterior.
+
+Si grafiquem les solucions numèriques corresponents a cada valor de $\gamma$ a $\hat{t}=t_a=0,025$, obtenim
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{euler_explicit_51_v2.png}
+        \caption{$\gamma=0,51$}
+    \end{subfigure}%
+    \hspace{0.000001\textwidth}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{euler_explicit_49_25_v2.png}
+        \caption{$\gamma=0.49$ i $\gamma=0,25$}
+    \end{subfigure}
+    \caption{Solució numèrica pel mètode d'Euler explicit pels diferents valors de $\gamma$ a $\hat{t}=t_a=0,025$.}
+    \label{fig:resultats_explicit}
+\end{figure}
+
+on les línies verticals vermelles representen els extrems del teixit malalt.
+
+Podem veure com per $\gamma=0,51$ la solució numèrica no té res a veure amb l'analítica, mentres que per $\gamma=0,49$ i $\gamma=0,25$ la solució numèrica és pràcticament igual a l'analítica. Això és degut a que el mètode d'Euler per l'equació de difusió amb una font d'energia externa només funciona o és estable per a un mallat o discretització tal que $\gamma \le 0,5$.
+
+Pel que fa als errors numèrics de les solucions estables en aquest instant de temps, els representem al següent gràfic:
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{errors_v2.png}  
+    \caption{Errors numèrics de les solucions estables a $\hat{t}=t_a=0,025$.}
+    \label{fig: error_explicit}
+\end{figure}
+
+COMPROVACIONS SI NO CONEIXESSIM LA SOLUCIO ANALITICA
+
+\section{Solució numèrica: mètode d'Euler implícit}
+En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra, que ve donada per l'expressió següent:
+\begin{equation}
+    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^n - \hat{T}_j^{n-1}}{\Delta \hat{t}} \ .
+    \label{derivada per lesquerra}
+\end{equation}
+
+Substituint les aproximacions de les derivades corresponentment a l'equació diferencial i aïllant $\hat{T}_j^n$,
+\begin{equation}
+    \hat{T}_j^n = \frac{\gamma \left( \hat{T}_{j+1}^n + \hat{T}_{j-1}^n \right) + \hat{T}_j^{n-1} + \Delta \hat{t}}{1 + 2\gamma}
+    \label{Tnj implicit} \ ,
+\end{equation}
+on $\gamma =\frac{\Delta \hat{t}}{\Delta \hat{z}^2}$.
+
+A la part dreta de la igualtat apareixen temperatures corresponents al pas temporal $n$. Per tant, no és possible expressar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors. Aquest fet és el que confereix al mètode el seu caràcter implícit.
+
+La resolució numèrica d'aquest problema es planteja com un sistema d'equacions algebraiques on les incògnites són les temperatures en cada posició per a un temps determinat. Aquest sistema es resol de manera iterativa a cada pas temporal $n$. Partint de les condicions inicials, es resol successivament cada sistema per obtenir les temperatures dels passos temporals següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+
+Remarquem que, per les condicions inicials i de contorn, les temperatures en $j=1$, $j=N$ i $n=1$ no són variables sinó valors ja coneguts. Concretament, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$. Així doncs, per a $j=2$ i $j=N-1$ cal utilitzar expressions modificades.
+
+La representació matricial del sistema es presenta a continuació, per a un $n$ determinat. Els elements de cada element de la matriu s'obtenen dels coeficients que acompanyen a la corresponent variable en l'Eq. \eqref{Tnj implicit}.
+
+\begin{equation}
+  \begin{pmatrix}
+    (2\gamma + {1}) & {-\gamma} & {0} & {0} & \cdots & {0} \\
+    {-\gamma} & (2\gamma + {1}) & {-\gamma} & {0} & \cdots & {0} \\
+    {0} & {-\gamma} & (2\gamma + {1}) & {-\gamma} & \cdots & {0} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+    {0} & {0} & \cdots & {-\gamma} & (2\gamma + {1}) & {-\gamma} \\
+    {0} & {0} & \cdots & {0} & {-\gamma} & (2\gamma + {1}) \\
+  \end{pmatrix}
+  \begin{pmatrix}
+    \hat{T}_{2}^{n} \\
+    \hat{T}_{3}^{n} \\
+    \vdots \\
+    \hat{T}_{N-2}^{n} \\
+    \hat{T}_{N-1}^{n} \\
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \Delta t + \beta\gamma + \hat{T}^{n-1}_2 \\
+    \Delta t + \hat{T}^{n-1}_3 \\
+    \vdots \\
+    \Delta t + \hat{T}^{n-1}_{N-2} \\
+    \Delta t + \beta\gamma + \hat{T}^{n-1}_{N-1} \\
+  \end{pmatrix}
+  \label{matriu implicit}
+\end{equation}
+
+Per resoldre aquest sistema, utilitzem el mètode iteratiu de Gauss-Seidel. A continuació s'analitzen gràficament les solucions obtingudes numèricament, una utilitzant un pas de temps $\Delta t = \Delta x^2$; i una altra amb $\Delta t = 0.5\Delta x^2$.
+
+A la Fig. \ref{fig: implicit} es presenta una gràfica que mostra el perfil espacial de temperatures en el temps $t_a$. S'hi representen les dues solucions numèriques obtingudes junt amb la solució analítica. L'espai delimitat per les rectes vermelles representa la regió malalta.
+
+Addicionalment, a la Fig. \ref{fig: error implicit} s'hi inclou una gràfica de l'error absolut associat a cadascuna de les solucions numèriques respecte la solució analítica, en funció de la posició. 
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/implicit_grafica.png}
+        \caption{Representació gràfica de les dues solucions numèriques junt amb la solució analítica.}
+        \label{fig: implicit}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/error_implicit.png}
+        \caption{Representació de l'error associat a cada solució.}
+        \label{fig: error implicit}
+    \end{minipage}
+    \caption{Comparació de dues solucions numèriques obtingudes pel mètode d'Euler implícit per a $t=t_a$..}
+    \label{fig:overall}
+\end{figure}
+
+En la Fig. \ref{fig: implicit}, les tres corbes pràcticament es solapen, el qual indica que les solucions numèriques són gairebé idèntiques a l'analítica. Això posa de manifest l'alta precisió del mètode en ambdós casos.
+
+Pel que fa la gràfica de l'error, es constata que aquest és molt petit (es manté inferior a 0.01 $^\circ$C) per a les dues solucions numèriques. No obstant això, permet identificar millor les diferències entre les solucions amb diferents maiats temporals. S'aprecia que, per un valor de $\gamma = 0.5$, l'error és lleugerament menor que per $\gamma = 1$. Això suggereix que l'ús d'un pas temporal més petit millora la precisió, tot i que la convergència del mètode es manté robusta per a ambdós valors de $\gamma$.
+
+Aquestes observacions posen de manifest l'eficàcia del mètode i la consistència de les solucions numèriques, independentment del tamany del maiat temporal adoptat.
+
+
+\section{Solució numèrica: mètode Crank-Nicolson}
+
+En aquest mètode numèric la discretització de la derivada temporal s'aproxima com en el mètode d'Euler explícit, l'Eq. \eqref{eq: derivada per la dreta}. En canvi, la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal:
+
+\begin{equation}
+    \frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
+    \label{mitjana segones derivades espacials}
+\end{equation}
+
+I ens acaba resultat l'expressió següent:
+
+
+La resolució d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $\hat{T}_j^n$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+
+El sistema es pot expressar en forma matricial per a cada pas $\hat{T}_j^n$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
+
+\begin{equation}
+  \begin{pmatrix}
+    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
+    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
+    & \\
+    \vdots & \vdots & & \ddots & & \vdots \\
+    & \\
+    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
+    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \hat{T}_{j=1}^{n+1} \\
+        \hat{T}_{j=2}^{n+1} \\
+        \vdots \\
+        \hat{T}_{j=N-2}^{n+1} \\
+        \hat{T}_{j=N-1}^{n+1} \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        f_{j=1} +\frac{\gamma}{2}\hat{T}_{c} \\
+        f_{j=2} \\
+        \vdots \\
+        f_{j=N-2} \\
+        f_{j=N-1} +\frac{\gamma}{2}\hat{T}_{c} \\
+    \end{pmatrix}
+\end{equation}
+
+on $f = \frac{\gamma}{2}\hat{T}_{j+1}^{n} + (\gamma - {1})\hat{T}_{j}^{n} + \frac{\gamma}{2}\hat{T}_{j-1}^{n} + \Delta\hat{t}$
+
+Per veure l'eficiència d'aquest mètode, compararem la solució analítica i la numèrica per a cada pas del 
+mallat espacial per al temps $t_a = 0.025$ especificada en l'enunciat. Calculem l'error absolut entre les 
+temperatures, que també ens servirà per comparar amb els altres dos mètodes numèrics que hem utilitzat.
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{errcranc3gamma.png}
+        \caption{error numèric de Crank-Nicolson per diferents mallats}
+    \end{subfigure}%
+    \hspace{0.01\textwidth}%
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        %\includegraphics[width=\textwidth]{errtemp3met.png}
+        \caption{error dels 3 mètodes numèrics utilitzats per un mateix mallat}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+
+    \caption{Gràfics Error numèric Crank Nicolson.}
+    \label{fig:dues_imatges}
+\end{figure}
+!!!!FALTA INCLOURE ERROR IMPLICIT, GP FET FALTA TENIR LES DADES EN TXT
+
+Observant el gràfic de l'esquerra podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. 
+També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit. 
+Això és perquè estem fent passos més petits en la discretització del temps. 
+Al reduir el tamany dels passos ens apropem cada vegada més a la definició de diferencial i,per tant, l'equació discretitzada s'aproxima millor a l'equació diferencial que volem resoldre.
+
+D'altra banda gràfics de la dreta, notem que la diferència de temperatura que presenta la solució numèrica de Crank és més gran que la que presenten els altres mètodes numèrics (Euler explícit i Euler implícit). 
+La diferència entre el mètodes numèrics és el tipus de discretització que fem per a les derivades de l'equació diferencial. Així doncs, veiem que per aquest problema i per aquest interval d'espai i temps, aproximar la derivada segona com la mitjana de ens porta a una solució que s'allunya més de la solució analítica. 
+Això podria ser perquè...SEGUIR
+
+\section{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
+
+Els mètodes numèrics implícits són aquells en què no és possible aïllar una variable en funció d'altres variables únicament de passos anteriors. Entre els mètodes que hem utilitzat, l’Euler implícit i el Crank-Nicolson en són exemples.
+
+La resolució numèrica d’aquests problemes es planteja com un sistema d’equacions algebraiques per a cada pas temporal. Utilitzar mètodes directes, com el de Gauss-Jordan, seria extremadament laboriós a causa de la dimensió del sistema. Per aquest motiu, es recorre a mètodes iteratius.
+
+En aquesta assignatura se n'han presentat dos: el de Jacobi i el de Gauss-Seidel. El segon ofereix avantatges significatius, com un temps de càlcul més curt i menor requeriment d'emmagatzematge. No obstant, considerem que el criteri rellevant per a seleccionar un mètode és el seu error. Per justificar la nostra elecció del mètode de Gauss-Seidel, hem comparat els dos mètodes en un cas concret.
+
+En la Fig. \ref{fig: compar jacobi gs}, es presenten, juntament amb la solució analítica, dues solucions numèriques del mètode d'Euler implícit amb $\gamma=1$ i en $t=t_a$: una obtinguda mitjançant el mètode de Jacobi i l'altra pel mètode de Gauss-Seidel. A més, en la Fig. \ref{??} es representa l'error absolut associat a cadascuna de les solucions numèriques respecte de l'analítica.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/implicit_grafica_comparacio.png}
+        \caption{Representació gràfica de les dues solucions numèriques junt amb la solució analítica.}
+        \label{fig: compar jacobi gs}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/error_implicit_comparacio.png}
+        \caption{Representació de l'error associat a cada solució.}
+        \label{fig: error compar jacobi gs}
+    \end{minipage}
+    \caption{Comparació del mètode de Jacobi i el de Gauss-Seidel per al mètode d'Euler implícit amb $\gamma=1$ i $t=t_a$.}
+    \label{fig: comparacio jacobi i gs}
+\end{figure}
+
+En la Fig. \ref{??} s'aprecia que, a prop dels extrems, les solucions que proporcionen ambdós mètodes són molt similars a la solució analítica. Tanmateix, en la zona central la solució obtinguda amb el mètode de Jacobi presenta una lleugera desviació.
+
+Aquest fet es reflecteix en la gràfica de l’error absolut. Tot i que en tots dos casos l’error és petit (es manté inferior a 0.1 $^\circ$C), l'error en el mètode de Gauss-Seidel és significativament inferior.
+
+Així, hem optat pel mètode de Gauss-Seidel per resoldre el problema, ja que involucra menor error i millor eficiència computacional.
+
+
+\section{Comparació dels mètodes - ho fem???}
+
+\section{Solució al problema}
+
+Tenint en compte doncs que el mètode que millors amb un menor error numèric ha estat el mètode d'Euler explicit amb un mallat tal que $\gamma=0,25$, ens disposem a resoldre el problema amb aquest mètode i mallat. Si ens fixem en la solució numèrica trobada per $\gamma=0,25$ representada a la Fig. \ref{fig:resultats_explicit} (b), veiem com pel temps considerat la zona sana supera els 50 $^\circ$C, és a dir, que el temps que busquem és menor al corresponent a $\hat{t}=t_a=0,025$ i, per tant, peer solucionar el problema és suficient amb utilitzar el codi emprat en aquest cas imposant que en el pas temporal on les condicions que garanteixen l'eficiència del tractament es violin, s'aturi el mètode i es retorni el valor del temps que correspon a aquest pas. Fent això, obtenim un valor pel temps màxim que podem estar fent el tractament sense trencar les condicions que garanteixen la seva eficiència de $t=58,13$ s.
+
+\section{Millora del model}
+
+
+
+
+\section{Animació}
+Un cop teniem els mètodes implementats hem representat els resultats amb un gif on es pot veure l'evolució del camp de temperatura en dues dimencions al llarg del temps. El nostre problema només depèn d'una dimenció espaial però per fer el gif més representatiu del sistema d'electrodes que narra el problema, hem extès el camp de temperatures a una segona dimenció espaial. 
+Per generara el gif primer hem calculat el camp de temperatures en 100 temps equiespaiats i hem convertit aquestes dades en 100 fitxers txt. En segon lloc, hem plotejat les dades d'aquests fitxers amb una rutina de gnuplot obtenint 100 fotogrames. Per últim amb el programa ImageMagick hem seqüenciat els fotogrames per generar el gif.
+En el gif veiem clarament com en els extrems dret i esquerra del camp, on hi hauria els electrodes, la temperatura es manté a la temperatura corporal i, en canvi, al mig, on hi hauria el teixit malalt, la temperatura va augmentant amb el temps.
+
+
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        %\includegraphics[width=\textwidth]{frame_000.png}
+        \caption{frame 1}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        %\includegraphics[width=\textwidth]{frame_050.png}
+        \caption{frame 50}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        %\includegraphics[width=\textwidth]{frame_100.png}
+        \caption{frame 100}
+    \end{subfigure}
+
+    \caption{Tres frames representatius del gif.}
+    \label{fig:dues_imatges}
+\end{figure}
+
+
+Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
+
+\end{document}
