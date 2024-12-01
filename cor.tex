@@ -108,8 +108,8 @@ Per aplicar el mètode numèric d'euler explicit
     \label{2a derivada espaial}
 \end{equation}
 
-\section{Euler implícit}
-En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra. Aquesta última ve donada per l'expressió següent:
+\section{Solució numèrica: mètode d'Euler implícit}
+En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra, que ve donada per l'expressió següent:
 \begin{equation}
     \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^n - \hat{T}_j^{n-1}}{\Delta \hat{t}} \ .
     \label{derivada per lesquerra}
@@ -121,17 +121,43 @@ Substituint les aproximacions de les derivades corresponentment a l'equació dif
     \label{Tnj implicit} \ .
 \end{equation}
 
-A la part dreta de la igualtat apareixen temperatures en el pas temporal $n$. Per tant, no és possible aïllar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors.  Així doncs, efectivament l'equació és implícita. 
+A la part dreta de la igualtat apareixen temperatures corresponents al pas temporal $n$. Per tant, no és possible expressar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors. Aquest fet és el que confereix al mètode el seu caràcter implícit.
 
-Per les condicions inicials i de contorn, les temperatures en $j=1$, $j=N$ i $n=1$ no són variables sinó valors ja coneguts. Concretament, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$. Així doncs, per a $j=2$ i $j=N-1$ cal utilitzar expressions modificades:
-\begin{align}
-    \hat{T}_2^n = \frac{\gamma \hat{T}_3^n + \beta(\gamma+1)+\Delta\hat{t}}{2\gamma+1} \ ; \label{T_2^n implicit} \\
-    \hat{T}_{N-1}^n = \frac{\gamma \hat{T}_{N-2}^n + \beta(\gamma+1)+\Delta\hat{t}}{2\gamma+1} \ . \label{T_N-1^n implicit}
-\end{align}
+La resolució numèrica d'aquest problema es planteja com un sistema d'equacions algebraiques on les incògnites són les temperatures en cada posició per a un temps determinat. Aquest sistema es resol de manera iterativa a cada pas temporal $n$. Partint de les condicions inicials, es resol successivament cada sistema per obtenir les temperatures dels passos temporals següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
 
-La resolució numèrica d'aquest problema es planteja com un sistema d'equacions algebraiques que cal resoldre iterativament en cada pas temporal $n$. Partint de les condicions inicials, es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+Remarquem que, per les condicions inicials i de contorn, les temperatures en $j=1$, $j=N$ i $n=1$ no són variables sinó valors ja coneguts. Concretament, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$. Així doncs, per a $j=2$ i $j=N-1$ cal utilitzar expressions modificades.
 
-El sistema es pot expressar en forma matricial per a cada pas $n$. Per resoldre'l, utilitzem el mètode iteratiu de Gauss-Seidel.
+La representació matricial del sistema es presenta a continuació, per a un $n$ determinat. Els elements de cada element de la matriu s'obtenen dels coeficients que acompanyen a la corresponent variable en l'Eq. \eqref{Tnj implicit}.
+
+\begin{equation}
+  \begin{pmatrix}
+    (2\gamma + {1}) & {-\gamma} & {0} & {0} & \cdots & {0} \\
+    {-\gamma} & (2\gamma + {1}) & {-\gamma} & {0} & \cdots & {0} \\
+    {0} & {-\gamma} & (2\gamma + {1}) & {-\gamma} & \cdots & {0} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+    {0} & {0} & \cdots & {-\gamma} & (2\gamma + {1}) & {-\gamma} \\
+    {0} & {0} & \cdots & {0} & {-\gamma} & (2\gamma + {1}) \\
+  \end{pmatrix}
+  \begin{pmatrix}
+    \hat{T}_{2}^{n} \\
+    \hat{T}_{3}^{n} \\
+    \vdots \\
+    \hat{T}_{N-2}^{n} \\
+    \hat{T}_{N-1}^{n} \\
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \Delta t + \beta\gamma + T^{n-1}_2 \\
+    \Delta t + T^{n-1}_3 \\
+    \vdots \\
+    \Delta t + T^{n-1}_{N-2} \\
+    \Delta t + \beta\gamma + T^{n-1}_{N-1} \\
+  \end{pmatrix}
+\end{equation}
+
+Per resoldre aquest sistema, utilitzem el mètode iteratiu de Gauss-Seidel.
+
+
 
 \section{Solució numèrica: mètode Crank-Nicolson}
 
