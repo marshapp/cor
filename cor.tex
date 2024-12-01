@@ -115,11 +115,12 @@ En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es c
     \label{derivada per lesquerra}
 \end{equation}
 
-Substituint les aproximacions de les derivades corresponentment a l'equació diferencial i aïllant $\hat{T}_j^n$, s'obté:
+Substituint les aproximacions de les derivades corresponentment a l'equació diferencial i aïllant $\hat{T}_j^n$,
 \begin{equation}
     \hat{T}_j^n = \frac{\gamma \left( \hat{T}_{j+1}^n + \hat{T}_{j-1}^n \right) + \hat{T}_j^{n-1} + \Delta \hat{t}}{1 + 2\gamma}
-    \label{Tnj implicit} \ .
+    \label{Tnj implicit} \ ,
 \end{equation}
+on $\gamma =\frac{\Delta \hat{t}}{\Delta \hat{z}^2}$.
 
 A la part dreta de la igualtat apareixen temperatures corresponents al pas temporal $n$. Per tant, no és possible expressar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors. Aquest fet és el que confereix al mètode el seu caràcter implícit.
 
@@ -147,16 +148,44 @@ La representació matricial del sistema es presenta a continuació, per a un $n$
   \end{pmatrix}
   =
   \begin{pmatrix}
-    \Delta t + \beta\gamma + T^{n-1}_2 \\
-    \Delta t + T^{n-1}_3 \\
+    \Delta t + \beta\gamma + \hat{T}^{n-1}_2 \\
+    \Delta t + \hat{T}^{n-1}_3 \\
     \vdots \\
-    \Delta t + T^{n-1}_{N-2} \\
-    \Delta t + \beta\gamma + T^{n-1}_{N-1} \\
+    \Delta t + \hat{T}^{n-1}_{N-2} \\
+    \Delta t + \beta\gamma + \hat{T}^{n-1}_{N-1} \\
   \end{pmatrix}
+  \label{matriu implicit}
 \end{equation}
 
-Per resoldre aquest sistema, utilitzem el mètode iteratiu de Gauss-Seidel.
+Per resoldre aquest sistema, utilitzem el mètode iteratiu de Gauss-Seidel. A continuació s'analitzen gràficament les solucions obtingudes numèricament, una utilitzant un pas de temps $\Delta t = \Delta x^2$; i una altra amb $\Delta t = 0.5\Delta x^2$.
 
+A la Fig. \ref{fig: implicit} es presenta una gràfica que mostra el perfil espacial de temperatures en el temps $t_a$. S'hi representen les dues solucions numèriques obtingudes junt amb la solució analítica. L'espai delimitat per les rectes vermelles representa la regió malalta.
+
+Addicionalment, a la Fig. \ref{fig: error implicit} s'hi inclou una gràfica de l'error absolut associat a cadascuna de les solucions numèriques respecte la solució analítica, en funció de la posició. 
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/implicit_grafica.png}
+        \caption{Representació gràfica de les dues solucions numèriques junt amb la solució analítica.}
+        \label{fig: implicit}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/error_implicit.png}
+        \caption{Representació de l'error associat a cada solució.}
+        \label{fig: error implicit}
+    \end{minipage}
+    \caption{Comparació de dues solucions numèriques obtingudes pel mètode d'Euler implícit per a $t=t_a$..}
+    \label{fig:overall}
+\end{figure}
+
+En la Fig. \ref{fig: implicit}, les tres corbes pràcticament es solapen, el qual indica que les solucions numèriques són gairebé idèntiques a l'analítica. Això posa de manifest l'alta precisió del mètode en ambdós casos.
+
+Pel que fa la gràfica de l'error, es constata que aquest és molt petit (es manté inferior a 0.01 $^\circ$C) per a les dues solucions numèriques. No obstant això, permet identificar millor les diferències entre les solucions amb diferents maiats temporals. S'aprecia que, per un valor de $\gamma = 0.5$, l'error és lleugerament menor que per $\gamma = 1$. Això suggereix que l'ús d'un pas temporal més petit millora la precisió, tot i que la convergència del mètode es manté robusta per a ambdós valors de $\gamma$.
+
+Aquestes observacions posen de manifest l'eficàcia del mètode i la consistència de les solucions numèriques, independentment del tamany del maiat temporal adoptat.
 
 
 \section{Solució numèrica: mètode Crank-Nicolson}
@@ -239,6 +268,43 @@ Al reduir el tamany dels passos ens apropem cada vegada més a la definició de 
 D'altra banda gràfics de la dreta, notem que la diferència de temperatura que presenta la solució numèrica de Crank és més gran que la que presenten els altres mètodes numèrics (Euler explícit i Euler implícit). 
 La diferència entre el mètodes numèrics és el tipus de discretització que fem per a les derivades de l'equació diferencial. Així doncs, veiem que per aquest problema i per aquest interval d'espai i temps, aproximar la derivada segona com la mitjana de ens porta a una solució que s'allunya més de la solució analítica. 
 Això podria ser perquè...SEGUIR
+
+\section{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
+
+Els mètodes numèrics implícits són aquells en què no és possible aïllar una variable en funció d'altres variables únicament de passos anteriors. Entre els mètodes que hem utilitzat, l’Euler implícit i el Crank-Nicolson en són exemples.
+
+La resolució numèrica d’aquests problemes es planteja com un sistema d’equacions algebraiques per a cada pas temporal. Utilitzar mètodes directes, com el de Gauss-Jordan, seria extremadament laboriós a causa de la dimensió del sistema. Per aquest motiu, es recorre a mètodes iteratius.
+
+En aquesta assignatura se n'han presentat dos: el de Jacobi i el de Gauss-Seidel. El segon ofereix avantatges significatius, com un temps de càlcul més curt i menor requeriment d'emmagatzematge. No obstant, considerem que el criteri rellevant per a seleccionar un mètode és el seu error. Per justificar la nostra elecció del mètode de Gauss-Seidel, hem comparat els dos mètodes en un cas concret.
+
+En la Fig. \ref{fig: compar jacobi gs}, es presenten, juntament amb la solució analítica, dues solucions numèriques del mètode d'Euler implícit amb $\gamma=1$ i en $t=t_a$: una obtinguda mitjançant el mètode de Jacobi i l'altra pel mètode de Gauss-Seidel. A més, en la Fig. \ref{??} es representa l'error absolut associat a cadascuna de les solucions numèriques respecte de l'analítica.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/implicit_grafica_comparacio.png}
+        \caption{Representació gràfica de les dues solucions numèriques junt amb la solució analítica.}
+        \label{fig: compar jacobi gs}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/error_implicit_comparacio.png}
+        \caption{Representació de l'error associat a cada solució.}
+        \label{fig: error compar jacobi gs}
+    \end{minipage}
+    \caption{Comparació del mètode de Jacobi i el de Gauss-Seidel per al mètode d'Euler implícit amb $\gamma=1$ i $t=t_a$.}
+    \label{fig: comparacio jacobi i gs}
+\end{figure}
+
+En la Fig. \ref{??} s'aprecia que, a prop dels extrems, les solucions que proporcionen ambdós mètodes són molt similars a la solució analítica. Tanmateix, en la zona central la solució obtinguda amb el mètode de Jacobi presenta una lleugera desviació.
+
+Aquest fet es reflecteix en la gràfica de l’error absolut. Tot i que en tots dos casos l’error és petit (es manté inferior a 0.1 $^\circ$C), l'error en el mètode de Gauss-Seidel és significativament inferior.
+
+Així, hem optat pel mètode de Gauss-Seidel per resoldre el problema, ja que involucra menor error i millor eficiència computacional.
+
+
+\section{Comparació dels mètodes - ho fem???}
 
 \section{Millora del model}
 
