@@ -193,14 +193,14 @@ Aquestes observacions posen de manifest l'eficàcia del mètode i la consistènc
 En aquest mètode numèric la discretització de la derivada temporal s'aproxima com en el mètode d'Euler explícit, l'Eq. \eqref{eq: derivada per la dreta}. En canvi, la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal:
 
 \begin{equation}
-    \frac{\partial^2\hat{T}}{\partial \hat{x^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta x}^2
+    \frac{\partial^2\hat{T}}{\partial \hat{z^2}} = \frac{1}{2}\frac{\hat{T}_{j+1}^n-2\hat{T}_{j}^n+\hat{T}_{j-1}^n}{\delta z}^2
     \label{mitjana segones derivades espacials}
 \end{equation}
 
 I ens acaba resultat l'expressió següent:
 \begin{equation}
-    \a
-    \label{}
+    \frac{\hat{T}_j^{n+1}-\hat{T}_j^{n}}{\Delta\hat{t}} = {\frac{1}{2}}(\frac{\hat{T}_{j+1}^{n+1}-2\hat{T}_j^{n+1}+\hat{T}_{j-1}^{n+1}}{\Delta\hat{z}^2}+\frac{\hat{T}_{j+1}^{n}-2\hat{T}_j^{n}+\hat{T}_{j-1}^{n}}{\Delta\hat{z}^2}) + 1
+    \label{discretitzacio crank-nicolson}
 \end{equation}
 
 La resolució d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $\hat{T}_j^n$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
@@ -234,7 +234,9 @@ El sistema es pot expressar en forma matricial per a cada pas $\hat{T}_j^n$, i p
     \end{pmatrix}
 \end{equation}
 
+\begin{center}
 on $f = \frac{\gamma}{2}\hat{T}_{j+1}^{n} + (\gamma - {1})\hat{T}_{j}^{n} + \frac{\gamma}{2}\hat{T}_{j-1}^{n} + \Delta\hat{t}$
+\end{center}
 
 Per veure l'eficiència d'aquest mètode, compararem la solució analítica i la numèrica per a cada pas del 
 mallat espacial per al temps $t_a = 0.025$ especificada en l'enunciat. Calculem l'error absolut entre les 
@@ -244,21 +246,25 @@ temperatures, que també ens servirà per comparar amb els altres dos mètodes n
     \centering
     \begin{subfigure}{0.3\textwidth}
         \centering
+        \includegraphics[width=\textwidth]{cranc2gamma.png}
+        \caption{Solució Crank-Nicolson per diferents mallats.}
+    \end{subfigure}
+    \hspace{0.025\textwidth}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
         \includegraphics[width=\textwidth]{errcranc3gamma.png}
-        \caption{error numèric de Crank-Nicolson per diferents mallats}
-    \end{subfigure}%
-    \hspace{0.01\textwidth}%
+        \caption{Error numèric de Crank-Nicolson per diferents mallats.}
+    \end{subfigure}
+    \hspace{0.025\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{errtemp3met.png}
-        \caption{error dels 3 mètodes numèrics utilitzats per un mateix mallat}
+        \caption{Comparació Error numèrs 3 mètodes utilitzats.}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-
-    \caption{Gràfics Error numèric Crank Nicolson.}
+    \hspace{0.025\textwidth}
+    \caption{Gràfics corresponents al mètode Crank Nicolson.}
     \label{fig:dues_imatges}
 \end{figure}
-!!!!FALTA INCLOURE ERROR IMPLICIT, GP FET FALTA TENIR LES DADES EN TXT
 
 Observant el gràfic de l'esquerra podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. 
 També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit. 
