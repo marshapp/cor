@@ -148,61 +148,22 @@ Pel que fa als errors numèrics de les solucions estables en aquest instant de t
 COMPROVACIONS SI NO CONEIXESSIM LA SOLUCIO ANALITICA
 
 \section{Solució numèrica: mètode d'Euler implícit}
-En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula de la mateixa manera que en l'explícit, és a dir, a partir de l'Eq. \eqref{2a derivada espaial}. La diferència recau en el càlcul de la derivada temporal: mentre que en el mètode explícit s'utilitza l'aproximació de la derivada per la dreta, en l'implícit s'aplica l'aproximació per l'esquerra, que ve donada per l'expressió següent:
-\begin{equation}
-    \frac{\partial \hat{T}}{\partial \hat{t}} = \frac{\hat{T}_j^n - \hat{T}_j^{n-1}}{\Delta \hat{t}} \ .
-    \label{derivada per lesquerra}
-\end{equation}
+En aquest mètode la derivada espacial de l'Eq. \eqref{eq: eq_normalitzada} es calcula aplicant l'aproximació pel centre, i la temporal per l'esquerra (aquí és on recau la diferència amb el mètode explícit).
 
 Substituint les aproximacions de les derivades corresponentment a l'equació diferencial i aïllant $\hat{T}_j^n$,
 \begin{equation}
     \hat{T}_j^n = \frac{\gamma \left( \hat{T}_{j+1}^n + \hat{T}_{j-1}^n \right) + \hat{T}_j^{n-1} + \Delta \hat{t}}{1 + 2\gamma}
-    \label{Tnj implicit} \ ,
+    \label{Tnj implici}
 \end{equation}
-on $\gamma =\frac{\Delta \hat{t}}{\Delta \hat{z}^2}$.
+on $\gamma =\frac{\Delta \hat{t}}{\Delta \hat{z}^2}$. Remarquem que, per les condicions inicials i de contorn, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$, pel que són valors coneguts i no incògnites. Així doncs, per a $T^n_{2}$ i $T^n_{N-1}$ cal utilitzar expressions modificades.
 
-A la part dreta de la igualtat apareixen temperatures corresponents al pas temporal $n$. Per tant, no és possible expressar $\hat{T}_j^n$ en funció de temperatures únicament en temps anteriors. Aquest fet és el que confereix al mètode el seu caràcter implícit.
+Per la implicitat d'aquesta equació, la resolució numèrica del problema es planteja com un sistema lineal d'equacions algebraiques on les incògnites són les temperatures en cada posició, per a cada pas temporal $n$. L'Eq. \eqref{matriu implicit} és seva representació matricial, donada a la Secció \ref{subsec: matrius}.
 
-La resolució numèrica d'aquest problema es planteja com un sistema d'equacions algebraiques on les incògnites són les temperatures en cada posició per a un temps determinat. Aquest sistema es resol de manera iterativa a cada pas temporal $n$. Partint de les condicions inicials, es resol successivament cada sistema per obtenir les temperatures dels passos temporals següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+Per a la resolució del sistema i l'anàlisi dels resultats, hem optat pel mètode de Gauss-Seidel, preferible respecte el de Jacobi després de comparar-los a la Secció \ref{subsec: comparacio jacobi gs}.
 
-Remarquem que, per les condicions inicials i de contorn, les temperatures en $j=1$, $j=N$ i $n=1$ no són variables sinó valors ja coneguts. Concretament, $\hat{T}_j^1=\hat{T}_1^n=\hat{T}_N^n = \beta$. Així doncs, per a $j=2$ i $j=N-1$ cal utilitzar expressions modificades.
+A la Fig. \ref{fig: implicit} es presenta una gràfica que mostra el perfil espacial de temperatures en el temps $t_a$. L'espai delimitat per les rectes vermelles representa la regió malalta. Addicionalment, a la Fig. \ref{fig: error implicit} es representa l'error absolut associat a cadascuna de les solucions numèriques respecte l'analítica. 
 
-La representació matricial del sistema es presenta a continuació, per a un $n$ determinat. Els elements de cada element de la matriu s'obtenen dels coeficients que acompanyen a la corresponent variable en l'Eq. \eqref{Tnj implicit}.
-
-\begin{equation}
-  \begin{pmatrix}
-    (2\gamma + {1}) & {-\gamma} & {0} & {0} & \cdots & {0} \\
-    {-\gamma} & (2\gamma + {1}) & {-\gamma} & {0} & \cdots & {0} \\
-    {0} & {-\gamma} & (2\gamma + {1}) & {-\gamma} & \cdots & {0} \\
-    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
-    {0} & {0} & \cdots & {-\gamma} & (2\gamma + {1}) & {-\gamma} \\
-    {0} & {0} & \cdots & {0} & {-\gamma} & (2\gamma + {1}) \\
-  \end{pmatrix}
-  \begin{pmatrix}
-    \hat{T}_{2}^{n} \\
-    \hat{T}_{3}^{n} \\
-    \vdots \\
-    \hat{T}_{N-2}^{n} \\
-    \hat{T}_{N-1}^{n} \\
-  \end{pmatrix}
-  =
-  \begin{pmatrix}
-    \Delta t + \beta\gamma + \hat{T}^{n-1}_2 \\
-    \Delta t + \hat{T}^{n-1}_3 \\
-    \vdots \\
-    \Delta t + \hat{T}^{n-1}_{N-2} \\
-    \Delta t + \beta\gamma + \hat{T}^{n-1}_{N-1} \\
-  \end{pmatrix}
-  \label{matriu implicit}
-\end{equation}
-
-Per resoldre aquest sistema, utilitzem el mètode iteratiu de Gauss-Seidel. A continuació s'analitzen gràficament les solucions obtingudes numèricament, una utilitzant un pas de temps $\Delta t = \Delta x^2$; i una altra amb $\Delta t = 0.5\Delta x^2$.
-
-A la Fig. \ref{fig: implicit} es presenta una gràfica que mostra el perfil espacial de temperatures en el temps $t_a$. S'hi representen les dues solucions numèriques obtingudes junt amb la solució analítica. L'espai delimitat per les rectes vermelles representa la regió malalta.
-
-Addicionalment, a la Fig. \ref{fig: error implicit} s'hi inclou una gràfica de l'error absolut associat a cadascuna de les solucions numèriques respecte la solució analítica, en funció de la posició. 
-
-\begin{figure}[htbp]
+\begin{figure}[H!]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
@@ -220,11 +181,9 @@ Addicionalment, a la Fig. \ref{fig: error implicit} s'hi inclou una gràfica de 
     \label{fig:overall}
 \end{figure}
 
-En la Fig. \ref{fig: implicit}, les tres corbes pràcticament es solapen, el qual indica que les solucions numèriques són gairebé idèntiques a l'analítica. Això posa de manifest l'alta precisió del mètode en ambdós casos.
+En la Fig. \ref{fig: implicit}, les tres corbes pràcticament es solapen. Això indica que les solucions numèriques són gairebé idèntiques a l'analítica, posant de manifest l'alta precisió del mètode en ambdós casos.
 
-Pel que fa la gràfica de l'error, es constata que aquest és molt petit (es manté inferior a 0.01 $^\circ$C) per a les dues solucions numèriques. No obstant això, permet identificar millor les diferències entre les solucions amb diferents maiats temporals. S'aprecia que, per un valor de $\gamma = 0.5$, l'error és lleugerament menor que per $\gamma = 1$. Això suggereix que l'ús d'un pas temporal més petit millora la precisió, tot i que la convergència del mètode es manté robusta per a ambdós valors de $\gamma$.
-
-Aquestes observacions posen de manifest l'eficàcia del mètode i la consistència de les solucions numèriques, independentment del tamany del maiat temporal adoptat.
+Pel que fa la gràfica de l'error, es constata que aquest és molt petit (es manté inferior als 0,01 $^\circ$C) per a les dues solucions numèriques. No obstant això, permet identificar millor les diferències entre les dues solucions. S'aprecia que, per un valor de $\gamma = 0,5$, l'error és lleugerament menor que per $\gamma = 1$. Això suggereix que l'ús d'un pas temporal més petit millora la precisió.
 
 
 \section{Solució numèrica: mètode Crank-Nicolson}
@@ -424,6 +383,77 @@ En els gifs veiem clarament com en els extrems dret i esquerra del camp, on hi h
 \end{figure}
 
 Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
+
+\section{Annex}
+
+\subsection{Matrius dels sistemes d'equacions} \label{subsec: matrius}
+
+Per al mètode d'Euler implícit, la representació matricial del sistema d'equacions en qüestió ve donada per la matriu següent.
+
+\begin{equation}
+  \begin{pmatrix}
+    (2\gamma + {1}) & {-\gamma} & {0} & {0} & \cdots & {0} \\
+    {-\gamma} & (2\gamma + {1}) & {-\gamma} & {0} & \cdots & {0} \\
+    {0} & {-\gamma} & (2\gamma + {1}) & {-\gamma} & \cdots & {0} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+    {0} & {0} & \cdots & {-\gamma} & (2\gamma + {1}) & {-\gamma} \\
+    {0} & {0} & \cdots & {0} & {-\gamma} & (2\gamma + {1}) \\
+  \end{pmatrix}
+  \begin{pmatrix}
+    \hat{T}_{2}^{n} \\
+    \hat{T}_{3}^{n} \\
+    \vdots \\
+    \hat{T}_{N-2}^{n} \\
+    \hat{T}_{N-1}^{n} \\
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \Delta t + \beta\gamma + \hat{T}^{n-1}_2 \\
+    \Delta t + \hat{T}^{n-1}_3 \\
+    \vdots \\
+    \Delta t + \hat{T}^{n-1}_{N-2} \\
+    \Delta t + \beta\gamma + \hat{T}^{n-1}_{N-1} \\
+  \end{pmatrix}
+  \label{matriu implicit}
+\end{equation}
+
+
+
+\subsection{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
+\label{subsec: comparacio jacobi gs}
+
+Els mètodes numèrics implícits són aquells en què no és possible aïllar una variable en funció d'altres variables únicament de passos anteriors. Entre els mètodes que hem utilitzat, l’Euler implícit i el Crank-Nicolson en són exemples.
+
+La resolució numèrica d’aquests problemes es planteja com un sistema d’equacions algebraiques per a cada pas temporal. Utilitzar mètodes directes, com el de Gauss-Jordan, seria molt laboriós a causa de la dimensió del sistema. Per aquest motiu, es recorre a mètodes iteratius.
+
+En aquesta assignatura se n'han presentat dos: el de Jacobi i el de Gauss-Seidel. El segon ofereix avantatges significatius, com un temps de càlcul més curt i menor requeriment d'emmagatzematge. No obstant això, considerem que el criteri rellevant per a seleccionar un mètode és el seu error. Per justificar la nostra elecció del mètode de Gauss-Seidel, hem comparat els dos mètodes en un cas concret.
+
+En la Fig. \ref{fig: compar jacobi gs} es presenten, juntament amb la solució analítica, dues solucions numèriques del mètode d'Euler implícit amb $\gamma=1$ i en $t=t_a$: una obtinguda mitjançant el mètode de Jacobi (amb una tolerància entre passos de $10^{-7}$) i l'altra pel mètode de Gauss-Seidel (amb una tolerància de $10^{-3}$). A més, en la Fig. \ref{fig: error compar jacobi gs} es representa l'error absolut associat a cadascuna de les solucions numèriques respecte de l'analítica.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/implicit_grafica_comparacio.png}
+        \caption{Representació gràfica de les dues solucions numèriques junt amb la solució analítica.}
+        \label{fig: compar jacobi gs}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Implicit_N/error_implicit_comparacio.png}
+        \caption{Representació de l'error associat a cada solució.}
+        \label{fig: error compar jacobi gs}
+    \end{minipage}
+    \caption{Comparació del mètode de Jacobi i el de Gauss-Seidel per al mètode d'Euler implícit amb $\gamma=1$ i $t=t_a$.}
+    \label{fig: comparacio jacobi i gs}
+\end{figure}
+
+En la Fig. \ref{fig: compar jacobi gs} s'aprecia que, a prop dels extrems, les solucions que proporcionen ambdós mètodes són molt similars a la solució analítica. Tanmateix, en la zona central la solució obtinguda amb el mètode de Jacobi presenta una lleugera desviació.
+
+Aquest fet es reflecteix en la gràfica de l’error. Tot i que en tots dos casos l’error és petit (es manté inferior a 0,1 $^\circ$C), l'error en el mètode de Gauss-Seidel és significativament inferior.
+
+En conclusió, hem escollit el mètode de Gauss-Seidel per resoldre el problema, ja que involucra menor error i millor eficiència computacional.
+
 
 
 \end{document}
