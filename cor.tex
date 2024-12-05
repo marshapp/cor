@@ -314,7 +314,7 @@ on $\kappa_0$ és la conductivitat tèrmica a la temperatura corporal, $T_c=36.5
 \section{Animació}
 Un cop teniem els mètodes implementats hem representat els resultats amb dos gifs on es pot veure l'evolució del camp de temperatura en dues dimencions al llarg del temps. El nostre problema només depèn d'una dimenció espaial però per fer els gifs més representatiu del sistema d'electrodes que narra el problema, hem extès el camp de temperatures a una segona dimenció espaial. 
 Per generara els gifs primer hem calculat el camp de temperatures en 100 temps equiespaiats i hem convertit aquestes dades en 100 fitxers txt. En segon lloc, hem plotejat les dades d'aquests fitxers amb una rutina de gnuplot obtenint 100 fotogrames. Per últim amb el programa ImageMagick hem seqüenciat els fotogrames per generar els gifs.
-En els gifs veiem clarament com en els extrems dret i esquerra del camp, on hi hauria els electrodes, la temperatura es manté a la temperatura corporal i, en canvi, al mig, on hi hauria el teixit malalt, la temperatura va augmentant amb el temps. Al gif anomenat 'animacio1.gif' podem veure clarament com la calor viatge a través del teixit, en el gif anomenat 'animacio2' podem veure clarament com a partir del temps ts(=58s) hi ha parts del teixit sa que superen els 50$^\circ$C.
+En els gifs veiem clarament com en els extrems dret i esquerra del camp, on hi hauria els electrodes, la temperatura es manté a la temperatura corporal i, en canvi, al mig, on hi hauria el teixit malalt, la temperatura va augmentant amb el temps. Al gif anomenat 'animacio1.gif' podem veure com la calor viatge a través del teixit, en el gif anomenat 'animacio2' podem veure com a partir del temps ts(=58s) hi ha parts del teixit sa que superen els 50$^\circ$C.
 
 
 
@@ -338,15 +338,15 @@ En els gifs veiem clarament com en els extrems dret i esquerra del camp, on hi h
         \caption{frame 100}
     \end{subfigure}
 
-    \caption{Tres frames representatius del gif.}
+    \caption{Tres frames representatius del gif animació 1}
     \label{fig:dues_imatges}
 \end{figure}
 
-Link per a accedir al gif penjat a youtube: \url{https://youtu.be/GGSp-ycK4H0}
 
-\section{Annex}
+\section*{Annexos}
+\appendix
 
-\subsection{Matrius dels sistemes d'equacions} \label{subsec: matrius}
+\section{Matrius dels sistemes d'equacions} \label{subsec: matrius}
 
 Per al mètode d'Euler implícit, la representació matricial del sistema d'equacions en qüestió ve donada per la matriu següent.
 
@@ -379,7 +379,7 @@ Per al mètode d'Euler implícit, la representació matricial del sistema d'equa
 
 
 
-\subsection{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
+\section{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
 \label{subsec: comparacio jacobi gs}
 
 Els mètodes numèrics implícits són aquells en què no és possible aïllar una variable en funció d'altres variables únicament de passos anteriors. Entre els mètodes que hem utilitzat, l’Euler implícit i el Crank-Nicolson en són exemples.
