@@ -296,46 +296,6 @@ Tenint en compte doncs que el mètode que millors amb un menor error numèric ha
     \label{fig:dues_imatges}
 \end{figure}
 
-\section{Millora del model}
-
-
-
-\section{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
-
-Els mètodes numèrics implícits són aquells en què no és possible aïllar una variable en funció d'altres variables únicament de passos anteriors. Entre els mètodes que hem utilitzat, l’Euler implícit i el Crank-Nicolson en són exemples.
-
-La resolució numèrica d’aquests problemes es planteja com un sistema d’equacions algebraiques per a cada pas temporal. Utilitzar mètodes directes, com el de Gauss-Jordan, seria extremadament laboriós a causa de la dimensió del sistema. Per aquest motiu, es recorre a mètodes iteratius.
-
-En aquesta assignatura se n'han presentat dos: el de Jacobi i el de Gauss-Seidel. El segon ofereix avantatges significatius, com un temps de càlcul més curt i menor requeriment d'emmagatzematge. No obstant, considerem que el criteri rellevant per a seleccionar un mètode és el seu error. Per justificar la nostra elecció del mètode de Gauss-Seidel, hem comparat els dos mètodes en un cas concret.
-
-En la Fig. \ref{fig: compar jacobi gs}, es presenten, juntament amb la solució analítica, dues solucions numèriques del mètode d'Euler implícit amb $\gamma=1$ i en $t=t_a$: una obtinguda mitjançant el mètode de Jacobi i l'altra pel mètode de Gauss-Seidel. A més, en la Fig. \ref{??} es representa l'error absolut associat a cadascuna de les solucions numèriques respecte de l'analítica.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Implicit_N/implicit_grafica_comparacio.png}
-        \caption{Representació gràfica de les dues solucions numèriques junt amb la solució analítica.}
-        \label{fig: compar jacobi gs}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Implicit_N/error_implicit_comparacio.png}
-        \caption{Representació de l'error associat a cada solució.}
-        \label{fig: error compar jacobi gs}
-    \end{minipage}
-    \caption{Comparació del mètode de Jacobi i el de Gauss-Seidel per al mètode d'Euler implícit amb $\gamma=1$ i $t=t_a$.}
-    \label{fig: comparacio jacobi i gs}
-\end{figure}
-
-En la Fig. \ref{??} s'aprecia que, a prop dels extrems, les solucions que proporcionen ambdós mètodes són molt similars a la solució analítica. Tanmateix, en la zona central la solució obtinguda amb el mètode de Jacobi presenta una lleugera desviació.
-
-Aquest fet es reflecteix en la gràfica de l’error absolut. Tot i que en tots dos casos l’error és petit (es manté inferior a 0.1 $^\circ$C), l'error en el mètode de Gauss-Seidel és significativament inferior.
-
-Així, hem optat pel mètode de Gauss-Seidel per resoldre el problema, ja que involucra menor error i millor eficiència computacional.
-
-
-\section{Comparació dels mètodes - ho fem???}
 
 \section{Millora del model}
 
