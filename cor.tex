@@ -28,8 +28,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 
-
-\title{\Huge\bfseries Cor:Cor \\[1ex] \Large}
+\title{\Huge\bfseries Pràctica Guiada: \\ Modelització del tractament \\ d’ablació cardíaca IVS \\[1ex] \Large}
 
 \author{\begin{tabular}{c}
 \textbf{GRUP C3} \\
@@ -185,7 +184,6 @@ En la Fig. \ref{fig: implicit}, les tres corbes pràcticament es solapen. Això 
 
 Pel que fa la gràfica de l'error, es constata que aquest és molt petit (es manté inferior als 0,01 $^\circ$C) per a les dues solucions numèriques. No obstant això, permet identificar millor les diferències entre les dues solucions. S'aprecia que, per un valor de $\gamma = 0,5$, l'error és lleugerament menor que per $\gamma = 1$. Això suggereix que l'ús d'un pas temporal més petit millora la precisió.
 
-
 \section{Solució numèrica: mètode Crank-Nicolson}
 
 En aquest mètode numèric la discretització de la derivada temporal s'aproxima com en el mètode d'Euler explícit, l'Eq. \eqref{eq: derivada per la dreta}. En canvi, la segona derivada espacial com la mitjana de les dues posicions considerades a la discretització de la derivada temporal:
@@ -201,44 +199,14 @@ I ens acaba resultat l'expressió següent:
     \label{discretitzacio crank-nicolson}
 \end{equation}
 
-La resolució d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $\hat{T}_j^n$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
+La resolució d'aquest problema també es planteja com un sistema d'equacions algebraiques, una per cada pas espacial, que cal resoldre iterativament per cada pas temporal $\hat{T}_j^n$. Com en el mètode d'Euler implícit, es parteix de les condicions inicials i es resol successivament per obtenir les temperatures dels passos següents de forma recursiva.
+%, aprofitant que els valors de $\hat{T}_j^{n-1}$ són coneguts del pas anterior.
 
-El sistema es pot expressar en forma matricial per a cada pas $\hat{T}_j^n$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
-
-\begin{equation}
-  \begin{pmatrix}
-    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
-    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
-    & \\
-    \vdots & \vdots & & \ddots & & \vdots \\
-    & \\
-    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
-    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
-    \end{pmatrix}
-    \begin{pmatrix}
-        \hat{T}_{j=1}^{n+1} \\
-        \hat{T}_{j=2}^{n+1} \\
-        \vdots \\
-        \hat{T}_{j=N-2}^{n+1} \\
-        \hat{T}_{j=N-1}^{n+1} \\
-    \end{pmatrix}
-    =
-    \begin{pmatrix}
-        f_{j=1} +\frac{\gamma}{2}\hat{T}_{c} \\
-        f_{j=2} \\
-        \vdots \\
-        f_{j=N-2} \\
-        f_{j=N-1} +\frac{\gamma}{2}\hat{T}_{c} \\
-    \end{pmatrix}
-\end{equation}
-
-\begin{center}
-on $f = \frac{\gamma}{2}\hat{T}_{j+1}^{n} + (\gamma - {1})\hat{T}_{j}^{n} + \frac{\gamma}{2}\hat{T}_{j-1}^{n} + \Delta\hat{t}$
-\end{center}
+El sistema es pot expressar en forma matricial\footnote{Matriu associada al mètode de Crank-Nicolson a la secció \ref{subsec: matrius}.} per a cada pas $\hat{T}_j^n$, i per resoldre'l, utilitzem el mètode iteratiu de Jacobi.
 
 Per veure l'eficiència d'aquest mètode, compararem la solució analítica i la numèrica per a cada pas del 
-mallat espacial per al temps $t_a = 0.025$ especificada en l'enunciat. Calculem l'error absolut entre les 
-temperatures, que també ens servirà per comparar amb els altres dos mètodes numèrics que hem utilitzat.
+mallat espacial per al temps $t_a = 0.025$ calculant l'error absolut entre les 
+temperatures.
 
 \begin{figure}[hbt!]
     \centering
@@ -246,32 +214,34 @@ temperatures, que també ens servirà per comparar amb els altres dos mètodes n
         \centering
         \includegraphics[width=\textwidth]{cranc2gamma.png}
         \caption{Solució Crank-Nicolson per diferents mallats.}
+        \label{fig:crank3gamma}
     \end{subfigure}
     \hspace{0.025\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{errcranc3gamma.png}
         \caption{Error numèric de Crank-Nicolson per diferents mallats.}
+        \label{fig:errcrank3gamma}
     \end{subfigure}
     \hspace{0.025\textwidth}
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{errtemp3met.png}
         \caption{Comparació Error numèrs 3 mètodes utilitzats.}
+        \label{fig:errtemp3met}
     \end{subfigure}
     \hspace{0.025\textwidth}
     \caption{Gràfics corresponents al mètode Crank Nicolson.}
     \label{fig:dues_imatges}
 \end{figure}
 
-Observant el gràfic de l'esquerra podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. 
+Observant la Fig. \ref{fig:errcrank3gamma}, podem veure que l'error augmenta com més ens allunyem dels límits de l'interval espacial però que si ens aproximem al centre torna a disminuir. 
 També podem observar que si reduim el tamany de l'interval del mallat, l'error es fa més petit. 
 Això és perquè estem fent passos més petits en la discretització del temps. 
 Al reduir el tamany dels passos ens apropem cada vegada més a la definició de diferencial i,per tant, l'equació discretitzada s'aproxima millor a l'equació diferencial que volem resoldre.
 
-D'altra banda gràfics de la dreta, notem que la diferència de temperatura que presenta la solució numèrica de Crank és més gran que la que presenten els altres mètodes numèrics (Euler explícit i Euler implícit). 
-La diferència entre el mètodes numèrics és el tipus de discretització que fem per a les derivades de l'equació diferencial. Així doncs, veiem que per aquest problema i per aquest interval d'espai i temps, aproximar la derivada segona com la mitjana de ens porta a una solució que s'allunya més de la solució analítica. 
-Això podria ser perquè...SEGUIR
+D'altra banda, en la Fig. \ref{fig:errtemp3met} notem que la diferència de temperatura que presenta la solució numèrica de Crank és més gran que la que presenten els altres mètodes numèrics (Euler explícit i Euler implícit). 
+La diferència entre el mètodes numèrics és el tipus de discretització que fem per a les derivades de l'equació diferencial. Veiem que per aquest problema i per aquest interval d'espai i temps, aproximar la derivada segona com la mitjana de ens porta a una solució que s'allunya més de la solució analítica. Això és perquè al afegir una operació matemàtica més en el càlcul de la derivada, també estem propagant l'error i, en conseqüència, aquest augmenta.
 
 \section{Solució al problema}
 
@@ -309,14 +279,15 @@ $\kappa(T)\approx\kappa_0 +\kappa'_0T$
 \end{equation}
 on $\kappa_0$ és la conductivitat tèrmica a la temperatura corporal, $T_c=36.5C^\circ$, i $\kappa'_0$ n'és la primera derivada a aquesta temperatura.
 
-
+\subsection{Millora del mètode numèric: discretització}
+El model proposat per descriure aquest problema utilitza per a tots el mètodes numèrics una discretització uniforme de l'espai i el temps. 
+En aquest cas, ens interessaria més tenir una discretització no uniforme que ofereixi més precisió en les zones límit (en els límits del teixit malalt) però que en la resta no tingui tanta preicisó, ja que no volem que ens augmenti significativament el temps de càlcul. 
+D'aquesta manera, distingiriem millor el teixit sa del teixit malalt.
 
 \section{Animació}
 Un cop teniem els mètodes implementats hem representat els resultats amb dos gifs on es pot veure l'evolució del camp de temperatura en dues dimencions al llarg del temps. El nostre problema només depèn d'una dimenció espaial però per fer els gifs més representatiu del sistema d'electrodes que narra el problema, hem extès el camp de temperatures a una segona dimenció espaial. 
 Per generara els gifs primer hem calculat el camp de temperatures en 100 temps equiespaiats i hem convertit aquestes dades en 100 fitxers txt. En segon lloc, hem plotejat les dades d'aquests fitxers amb una rutina de gnuplot obtenint 100 fotogrames. Per últim amb el programa ImageMagick hem seqüenciat els fotogrames per generar els gifs.
 En els gifs veiem clarament com en els extrems dret i esquerra del camp, on hi hauria els electrodes, la temperatura es manté a la temperatura corporal i, en canvi, al mig, on hi hauria el teixit malalt, la temperatura va augmentant amb el temps. Al gif anomenat 'animacio1.gif' podem veure com la calor viatge a través del teixit, en el gif anomenat 'animacio2' podem veure com a partir del temps ts(=58s) hi ha parts del teixit sa que superen els 50$^\circ$C.
-
-
 
 \begin{figure}[hbt!]
     \centering
@@ -377,7 +348,38 @@ Per al mètode d'Euler implícit, la representació matricial del sistema d'equa
   \label{matriu implicit}
 \end{equation}
 
+Per al mètode de Crank-Nicolson, la representació matricial del sistema d'equacions en qüestió ve donada per la matriu següent.
 
+\begin{equation}
+  \begin{pmatrix}
+    (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & {0} & \cdots & {0} \\
+    {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} & {0} & \cdots & {0} \\
+    & \\
+    \vdots & \vdots & & \ddots & & \vdots \\
+    & \\
+    {0} & {0} & \cdots & {-}\frac{\gamma}{2} & (\gamma - {1}) & {-}\frac{\gamma}{2} \\
+    {0} & {0} & \cdots & {0} & {-}\frac{\gamma}{2} & (\gamma - {1}) \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \hat{T}_{j=1}^{n+1} \\
+        \hat{T}_{j=2}^{n+1} \\
+        \vdots \\
+        \hat{T}_{j=N-2}^{n+1} \\
+        \hat{T}_{j=N-1}^{n+1} \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        f_{j=1} +\frac{\gamma}{2}\hat{T}_{c} \\
+        f_{j=2} \\
+        \vdots \\
+        f_{j=N-2} \\
+        f_{j=N-1} +\frac{\gamma}{2}\hat{T}_{c} \\
+    \end{pmatrix}
+\end{equation}
+
+\begin{center}
+on $f = \frac{\gamma}{2}\hat{T}_{j+1}^{n} + (\gamma - {1})\hat{T}_{j}^{n} + \frac{\gamma}{2}\hat{T}_{j-1}^{n} + \Delta\hat{t}$
+\end{center}
 
 \section{Comparació del mètode de Jacobi i el mètode de Gauss-Seidel}
 \label{subsec: comparacio jacobi gs}
