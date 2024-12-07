@@ -3,7 +3,7 @@ program errcranc
 implicit none(type, external)
     integer,parameter :: N=101 !al començar a n=0 hi haura n+1 punts
     integer, parameter :: N_x = 101
-    real, parameter :: Az =1.0/(N), Tc = 36.5, cv = 3686, r = 1081, k=0.56, s=0.472, v=40,  L=0.02, A_z=1
+    real, parameter :: Az =1.0/(N), Tc = 36.5, cv = 3686, r = 1081, k=0.56, s=0.472, v=40,  L=0.02, A_z=0.25
     real,parameter :: At= A_z*(Az**2)
     integer, parameter :: c=int(0.025/At)
     real,parameter :: p = (s*v**2)/(2*L**2)
@@ -87,7 +87,7 @@ implicit none(type, external)
         end do
     end do   
 
-    open(unit=13, file="cranc_error1s.txt", status="replace")   
+    open(unit=13, file="cranc_error025.txt", status="replace")   
     do w = 0, N
         !escriu: Az, error absolut per un A_z concret
         write(13, *) (w*Az)*l, abs(f(100, w*Az)-x(w,c)*((beta*(l**2))/alpha))
