@@ -16,15 +16,15 @@ PROGRAM implicit
     ! Every row is a certain time and every column a certain position.
     ! Each row is the vector we'll apply the Gauss-Seidel method to in order to find the next row.    
     
-    
-    tolerance = (10.0_DP)**(-1) ! Tolerance we want in Gauss-Seidel method.
-    steps = 100 ! Maximum number of steps we allow'll Gauss-Seidel to take.
 
     ! Define numerical constants from the problem.
     pext = sigma*V**2/(2*L**2)
     alpha = kk/(cv*rho)
     beta = pext/(cv*rho)
     cond = Tc*alpha/(beta*L**2)   ! This is Tc normalised.
+
+    tolerance = 0.001*alpha/(beta*L**2)  ! Tolerance we want in Gauss-Seidel method.
+    steps = 1000 ! Maximum number of steps we allow'll Gauss-Seidel to take.
     
     scales=[1,2,4]
     ! We'll use scale to define the relation between dz and dt (see below).
@@ -123,7 +123,8 @@ PROGRAM implicit
     ! Create a .txt file in which to put the errors for each position, calculated as the difference between the analytical and the numerical solutions.
     open(NEWUNIT=error_data, file='error_implicit.dat', status='unknown', action='write')
         do j = 0, N-1
-            write(error_data, *) (j*dz)*L , abs( temperaturesta(1,j+1)-f(200, j*dz) ) , abs( temperaturesta(2,j+1)-f(200, j*dz) ) , abs( temperaturesta(3,j+1)-f(200, j*dz) )
+            write(error_data, *) (j*dz)*L , abs( temperaturesta(1,j+1)-f(200, j*dz) ) , &
+            abs( temperaturesta(2,j+1)-f(200, j*dz) ), abs( temperaturesta(3,j+1)-f(200, j*dz) )
         end do
     close(error_data)
     
