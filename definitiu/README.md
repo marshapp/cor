@@ -1,4 +1,4 @@
-Les instruccions referents a l'execució del codi (els READMEs) del mètode d'Euler explicit i dels mètodes implicits (Euler implicit i Crank-Nicolson) són a les seves respectives carpetes.
+Les instruccions referents a l'execució del codi (els READMEs) del mètode d'Euler explicit, dels mètodes implicits (Euler implicit i Crank-Nicolson) i del gif són a les seves respectives carpetes.
 
 L'estructura dels arxius entregats és la següent:
 
