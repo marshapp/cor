@@ -14,30 +14,37 @@ PROGRAM implicit
     real(KIND=DP), allocatable :: ter(:,:), vecm(:), temperaturesta(:,:)
     ! We'll store all the temperature values in ter.
     ! Every row is a certain time and every column a certain position.
-    ! Its rows are the vectors we'll input in gauss-seidel.
+    ! Each row is the vector we'll apply the Gauss-Seidel method to in order to find the next row.    
     
     
-    
-    tolerance = (10.0_DP)**(-1) ! Tolerance we want in G-S method.
-    steps = 100 ! Max number of steps we allow G-S to take.
-    
+    tolerance = (10.0_DP)**(-1) ! Tolerance we want in Gauss-Seidel method.
+    steps = 100 ! Maximum number of steps we allow'll Gauss-Seidel to take.
+
+    ! Define numerical constants from the problem.
     pext = sigma*V**2/(2*L**2)
     alpha = kk/(cv*rho)
     beta = pext/(cv*rho)
-    cond = Tc*alpha/(beta*L**2)
-    
-    ALLOCATE(vecm(N-2))
-    ALLOCATE(temperaturesta(3,N))
+    cond = Tc*alpha/(beta*L**2)   ! This is Tc normalised.
     
     scales=[1,2,4]
+    ! We'll use scale to define the relation between dz and dt (see below).
+    ! scale is the inverse of gamma.
+    ! We keep in scales the values of scale (and therefore gamma) over
+    ! which we want to iterate (we'll use them in the report).
+
+    ALLOCATE(vecm(N-2))
+    ALLOCATE(temperaturesta(3,N))
+    ! In temperatures ta we'll write the temperatures we obtained at ta.
+    ! It has one row for every value of scale.
     
-    DO s=1,3 ! Scale defines relation between dz and dt (see below).
+    DO s=1,3
+        ! Define the discretizations.
         scale=scales(s)
-        dz= 1.0_DP / (N - 1)  ! Use 1.0_DP to force floating-point division.
+        dz= 1.0_DP / (N - 1)
         dt=(1.0_DP/scale)*dz**2
         gamma = dt/(dz**2)
     
-        ! Define the matrix mat, which contains the coefficients of the system of equations for each t.
+        ! Define the matrix mat,  which is the matrix that contains the coefficients of the system of equations.
         DO i = 1,N-2
             mat(i, i) = 2 * gamma + 1  ! diag
             IF (i .GE. 2) THEN
@@ -47,12 +54,13 @@ PROGRAM implicit
                 mat(i, i+1) = -gamma   ! upper diag
             END IF
         END DO
-    
-        ! Define size of ter.
+        
+        ! Define number of temporal steps we'll take. Depends on dt, and therefore on scale. 
         rows = int(ta/dt)+1
+        ! According to how we previously defined it, this is what the size of ter should be.
         ALLOCATE(ter(rows,N))
     
-        ! Known by CC.
+        ! Fill temperatures known by CC.
         DO m = 1, rows
             ter(m, 1) = cond
             ter(m, N) = cond
@@ -64,26 +72,32 @@ PROGRAM implicit
         END DO
     
     
-        ! Find temperatures using Gauss-Seidel method.
+        ! Find temperatures using Gauss-Seidel method, for each row (ie for each time).
         DO m = 2,rows
-            ! Define the components of bp.
+            ! Define the components of bp, which is the vector containing the system's constants.
+            ! Element i of bp corresponds to element i+1 of ter.
             DO i = 2,N-3
                 bp(i) = dt + ter(m-1,i+1)
             END DO
+            ! Since the temperatures at j=1 and j=N are not variables, the equation used to
+            ! find the temperature at j=2 and j=N-2 are modified, so their bps are different from the rest.
             bp(1) = dt + cond*(gamma) + ter(m-1,2)
             bp(N-2) = dt + cond*(gamma) + ter(m-1,N-1)
     
             vecm = ter(m-1,2:N-1) ! We'll use the vector from the previous step as the
-            ! starting point, since it's probably close to the one we want to find.
-    
+            ! initial vector for the iteration, since it's probably close to the one we want to find.
+
+            ! We don't want to print that the method converges every time so we input .false.
+
             CALL gauseideltol(mat,vecm,bp,tolerance,steps,.false.)
-    
+
+            ! Define the next row as the result of Gauss-Seidel
             ter(m,2:N-1) = vecm
     
         END DO
     
         temperaturesta(s,:) = ( ter(rows,:)*(beta*(L**2)) )/alpha
-        ! We'll store here the values of the temperature at t=ta (in °C) for each gamma.
+        ! We'll store here the values of the temperature (in °C) at ta (which corresponds to last row of ter) for each gamma.
     
         DEALLOCATE(ter)
     
@@ -93,8 +107,8 @@ PROGRAM implicit
     ! Create a .txt file in which to put the data we need for the graph.
     OPEN(NEWUNIT=data, FILE='implicit.dat', STATUS='unknown', ACTION='WRITE')
     
-    ! We'll write data for t=ta (which corresponds to last row of ter)
-    ! 1st column: positions (z) ; 2nd column: temperatures
+    ! We'll write data for ta for each position.
+    ! 1st column: positions (z) ; last column: analytical solution; middle columns: numerical solutions
     ! We also undo the normalisation
     position = 0
     
@@ -105,9 +119,9 @@ PROGRAM implicit
     
     
     !----------------- Error ----------------
-    
+
+    ! Create a .txt file in which to put the errors for each position, calculated as the difference between the analytical and the numerical solutions.
     open(NEWUNIT=error_data, file='error_implicit.dat', status='unknown', action='write')
-        ! We write in error_data the error for each position (en m)
         do j = 0, N-1
             write(error_data, *) (j*dz)*L , abs( temperaturesta(1,j+1)-f(200, j*dz) ) , abs( temperaturesta(2,j+1)-f(200, j*dz) ) , abs( temperaturesta(3,j+1)-f(200, j*dz) )
         end do
@@ -116,6 +130,10 @@ PROGRAM implicit
     
     DEALLOCATE(vecm)
     DEALLOCATE(temperaturesta)
+
+
+    ! Define the function corresponding to the analytic solution at ta
+    ! Its inputs are the normalised position and the number of terms of the summation in its expression
     
     contains
     
@@ -133,7 +151,7 @@ PROGRAM implicit
         end do
     
         f_norm=cond+(4/(pi**3))*sumatori
-        f=(f_norm*beta*(L**2))/alpha
+        f=(f_norm*beta*(L**2))/alpha ! Denormalise the result
     
     end function
     
