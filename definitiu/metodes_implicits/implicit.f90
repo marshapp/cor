@@ -24,6 +24,7 @@ PROGRAM implicit
     cond = Tc*alpha/(beta*L**2)   ! This is Tc normalised.
 
     tolerance = 0.001*alpha/(beta*L**2)  ! Tolerance we want in Gauss-Seidel method.
+    ! It's defined by a difference of temperature (in °C) of 0,001.
     steps = 1000 ! Maximum number of steps we allow'll Gauss-Seidel to take.
     
     scales=[1,2,4]
