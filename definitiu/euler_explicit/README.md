@@ -1,0 +1,1 @@
+Pel que fa al mètode explicit, primer s'ha de compilar a la terminal "explicit.f90" i un cop fet això s'haurien de crear dos arxius de dades necessaris per fer els gràfics: "explicit.dat" i "error_explicit.dat". Amb això, si es carrega "explicit.gpi", haurien de crear-se dues imatges: "explicit_51.png" i "explicit_49i25.png", amb les solucions graficades pels diferents mallats.
