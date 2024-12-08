@@ -9,7 +9,7 @@ Presentem la solució al problema en l'arxiu "solució.f90" que una vegada compi
 
 Podem trobar també l'arxiu "errors.gpi" que una vegada carregat mostra dos gràfics amb els errors numèrics de cada mètode, un en el que es comparen tots els mètodes amb tots els mallats proposats i un altre en el que es comparen tots els mètodes amb un mateix mallat que utilitzem en l'anàlisi de resultats de l'informe pdf. Ara bé, aquest arxiu s'ha d'executar una vegada s'hagin executat els programes relatius al mètode d'Euler explicit, d'Euler implicit (per Gauss-Sidel) i de Crank-Nicolson (per Gauss-Seidel) i conseqüentment generat els arxius amb les dades necessàries següents: "error_explicit.dat", "error_implicit.dat" i "error_crank.dat".
 
-També presentem una animació del probelma a la carpeta "EXTRA: animacio".
+També presentem una animació del probelma a la carpeta "EXTRA: gif".
 
 A més, tenim aquí també l'informe a entregar com "informe.pdf.
 
