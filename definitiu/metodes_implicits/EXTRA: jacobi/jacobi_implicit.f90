@@ -1,4 +1,4 @@
-PROGRAM IVEGOTTHIS
+PROGRAM jacobi
     
     implicit none (type, external)
     
@@ -14,26 +14,32 @@ PROGRAM IVEGOTTHIS
     ! Its rows are the vectors we'll input in gauss-seidel.
 
 
-    !---------
+    !---------ISAAC
     real(KIND=DP) ::  x(N-2), x_1(N-2)
     integer :: iter
     real(KIND=DP) :: sum, error
 
-    
-    scale=1 ! Scale defines relation between dz and dt (see below).
-    tolerance = (10.0_DP)**(-7)! Tolerance we want in the method.
-    steps = 1000 ! Max number of steps we allow the method to take.
-    
-    dz= (1.0_DP) / (N - 1)  ! Use 1.0_DP to force floating-point division.
-    dt=(1.0_DP/scale)*(dz**2)
-    
-    pext = (sigma*(V**2))/(2*(L**2))
+
+    ! Define numerical constants from the problem.
+    pext = sigma*V**2/(2*L**2)
     alpha = kk/(cv*rho)
     beta = pext/(cv*rho)
-    cond = (Tc*alpha)/(beta*(L**2))
-    gamma = dt/(dz**2)
+    cond = Tc*alpha/(beta*L**2)   ! This is Tc normalised.
+
+
+    tolerance = 0.001*alpha/(beta*L**2)  ! Tolerance we want in Jacobi method.
+    ! It's defined by a difference of temperature (in °C) of 0,001.
+    steps = 1000 ! Maximum number of steps we allow'll Gauss-Seidel to take.
     
-    ! Define the matrix mat, which contains the coefficients of the system of equations for each t.
+    scale=1 ! We'll use scale to define the relation between dz and dt (see below).
+    ! scale is the inverse of gamma.
+
+    ! Define the discretizations.
+    dz= (1.0_DP) / (N - 1)
+    dt=(1.0_DP/scale)*(dz**2)
+    
+    
+    ! Define the matrix mat,  which is the matrix that contains the coefficients of the system of equations.
     DO i = 1,N-2
         mat(i, i) = 2 * gamma + 1  ! diag
         IF (i .GE. 2) THEN
@@ -43,15 +49,18 @@ PROGRAM IVEGOTTHIS
             mat(i, i+1) = -gamma   ! upper diag
         END IF
     END DO
-    
-    
-    ! Define size of ter as well as allocatable vectors.
-    rows = int(ta/dt)
-    ALLOCATE(ter(rows,N))
+
     ALLOCATE(vecm(N-2))
     ALLOCATE(temperaturesta(N))
+    ! In temperatures ta we'll write the temperatures we obtained at ta.
+
+    ! Define number of temporal steps we'll take. Depends on dt, and therefore on scale. 
+    rows = int(ta/dt)+1
+    ! According to how we previously defined it, this is what the size of ter should be.
+    ALLOCATE(ter(rows,N))
     
-    ! Known by CC.
+    
+    ! Fill temperatures known by CC.
     DO m = 1, rows
         ter(m, 1) = cond
         ter(m, N) = cond
@@ -62,21 +71,22 @@ PROGRAM IVEGOTTHIS
         ter(1,j) = cond
     END DO
     
-    
-    ! Find temperatures using method.
+    ! Find temperatures using Jacobi method, for each row (ie for each time).
     DO m = 2,rows
-        ! Define the components of bp.
+        ! Define the components of bp, which is the vector containing the system's constants.
+        ! Element i of bp corresponds to element i+1 of ter.
         DO i = 2,N-3
             bp(i) = dt + ter(m-1,i+1)
-        END DO 
+        END DO
+        ! Since the temperatures at j=1 and j=N are not variables, the equation used to
+        ! find the temperature at j=2 and j=N-2 are modified, so their bps are different from the rest.
         bp(1) = dt + cond*(gamma) + ter(m-1,2)
         bp(N-2) = dt + cond*(gamma) + ter(m-1,N-1)
     
-        !--------------------------------------JACOBI------------------------------------
+        !--------------------------------------JACOBI------------------------------------ ISAAC!!!
 
-        x= ter(m-1,2:N-1)! We'll use the vector from the previous step as the
-        ! starting point, since it's probably close to the one we want to find.
-        
+        x= ter(m-1,2:N-1)   ! We'll use the vector from the previous step as the
+        ! initial vector for the iteration, since it's probably close to the one we want to find.
         
         do iter = 1, steps
         
@@ -111,8 +121,8 @@ PROGRAM IVEGOTTHIS
     ! Create a .txt file in which to put the data we need for the graph.
     OPEN(NEWUNIT=data, FILE='implicit.dat', STATUS='unknown', ACTION='WRITE')
     
-    ! We'll write data for t=ta (which corresponds to last row of ter)
-    ! 1st column: positions (z) ; 2nd column: temperatures
+    ! We'll write data for ta for each position.
+    ! 1st column: positions (z) ; 2nd column: numerical solutions
     ! We also undo the normalisation
     position = 0
     temperaturesta = (ter(rows,:)*(beta*(L**2)))/alpha
@@ -129,8 +139,8 @@ PROGRAM IVEGOTTHIS
 
     !----------------- Error ----------------
 
+! Create a .txt file in which to put the error for each position, calculated as the difference between the analytical and the numerical solution.
 open(NEWUNIT=error_data, file='error_implicit.dat', status='unknown', action='write')
-! We write in error_data the error for each position (en m)
 do j = 0, N-1
     write(error_data, *) (j*dz)*L , abs( temperaturesta(j+1)-f(300, j*dz) )
 end do
@@ -138,6 +148,11 @@ close(error_data)
 
 
 DEALLOCATE(temperaturesta)
+
+
+! Define the function corresponding to the analytic solution at ta
+! Its inputs are the normalised position and the number of terms of the summation in its expression
+
 
 contains
 
@@ -155,7 +170,7 @@ do k = 1, Nf
 end do
 
 f_norm=cond+(4/(pi**3))*sumatori
-f=(f_norm*beta*(L**2))/alpha
+f=(f_norm*beta*(L**2))/alpha   ! Denormalise the result
 
 end function
     
