@@ -33,7 +33,7 @@ PROGRAM implicit
     ! We keep in scales the values of scale (and therefore gamma) over
     ! which we want to iterate (we'll use them in the report).
     ! Even though in the outline we're only asked to use the first two values of scale, we do the
-    ! third one in order to compare this method to Euler's explicit method later.
+    ! third one in order to compare this method to Euler's explicit method later, and we'll only need its error.
 
     ALLOCATE(vecm(N-2))
     ALLOCATE(temperaturesta(3,N))
@@ -116,7 +116,7 @@ PROGRAM implicit
     position = 0
     
     DO i = 1,N
-        WRITE(data,*) position , temperaturesta(1,i) , temperaturesta(2,i) , temperaturesta(3,i) , f(200,position/L)
+        WRITE(data,*) position , temperaturesta(1,i) , temperaturesta(2,i) , f(200,position/L)
         position = position+dz*L
     END DO
     
