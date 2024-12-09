@@ -1,4 +1,4 @@
-L'estructura dels arxius entregats és la següent:
+Benvinguts al nostre repositori!
 
 Els programes corresponents al mètode d'Euler explicit es troben a la carpeta "euler_explicit".
 
