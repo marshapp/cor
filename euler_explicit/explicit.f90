@@ -85,14 +85,14 @@ program explicit
     contains 
     !Aquí definim la funció corresponent a la solució analítica pel temps normalitzat t_a
     !que pren per arguments la posició normalitzada i el nombre de termes del sumatori que apareix a la seva expressió    
-        real function f(N, z_norm)
+        real(KIND=DP) function f(N, z_norm)
 
             implicit none(type, external)
             integer, intent(in) :: N
-            real, intent(in) :: z_norm
-            real, parameter :: pi=2*acos(0.0)
+            real(KIND=DP), intent(in) :: z_norm
+            real(KIND=DP), parameter :: pi=2*acos(0.0)
             integer :: k
-            real :: sumatori, f_norm
+            real(KIND=DP) :: sumatori, f_norm
 
             sumatori=0 
 
