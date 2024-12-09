@@ -1,4 +1,4 @@
-El mètode de Gauss-Seidel el nostre mètode principal de resolució dels mètodes implícits.
+El mètode de Gauss-Seidel és el nostre mètode principal de resolució dels mètodes implícits.
 
 En aquesta carpeta, existeix una altra anomenada "EXTRA: jacobi". En aquesta s'hi troben també programes referents a la implementació del mètode d'Euler implícit però utilitzant el mètode de Jacobi per resoldre els sistemes d'equacions. Ha de quedar clar que la nostra intenció és que principalment se'ns avalui la implementació del mètode d'Euler implícit utilitzant Gauss-Seidel i que la part referent a Jacobi és un EXTRA que afegim per completitud i en certa manera per justificar l'ús preferent de Gauss-Seidel davant de Jacobi.
 
