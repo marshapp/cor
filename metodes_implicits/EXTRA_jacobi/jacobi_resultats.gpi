@@ -34,7 +34,7 @@ set xlabel "z (m)"
 set ylabel "ΔT (°C)"
 
 set xrange[-0.001:0.021]
-set yrange[0:0.1]
+set yrange[0:0.45]
 
 plot "../error_implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "error_jacobi_implicit.dat" u 1:2 w l ls 2 t "Jacobi"
 
