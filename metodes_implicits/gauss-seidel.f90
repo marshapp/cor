@@ -77,7 +77,10 @@ SUBROUTINE gauseideltol(mat,vec,b,tolerance,stepslimit,print)
     numsteps=0 ! We'll count how many steps are needed and keep track here
     ! Apply Gauss-Seidel as long as error is bigger than tolerance
     DO WHILE (numsteps .LT. stepslimit)
-        CALL pasitoGS(mat,vec,b,error)    ! Starting from the initial vector, we'll modify vector vec applying the method
+        CALL pasitoGS(mat,vec,b,error)
+        ! Starting from the initial vector, we'll modify vector vec applying the method
+        ! In the variable 'error' we'll store the value of bigdif for each step and then compare it
+        ! to the tolerance in order to know when to stop the iteration.
         numsteps=numsteps+1
 
         IF (print) THEN
