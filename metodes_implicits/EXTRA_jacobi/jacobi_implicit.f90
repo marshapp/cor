@@ -128,7 +128,7 @@ PROGRAM jacobi
 
     
     ! Create a .txt file in which to put the data we need for the graph.
-    OPEN(NEWUNIT=data, FILE='implicit.dat', STATUS='unknown', ACTION='WRITE')
+    OPEN(NEWUNIT=data, FILE='jacobi_implicit.dat', STATUS='unknown', ACTION='WRITE')
     
     ! We'll write data for ta for each position.
     ! 1st column: positions (z) ; 2nd column: numerical solutions
@@ -149,7 +149,7 @@ PROGRAM jacobi
     !----------------- Error ----------------
 
 ! Create a .txt file in which to put the error for each position, calculated as the difference between the analytical and the numerical solution.
-open(NEWUNIT=error_data, file='error_implicit.dat', status='unknown', action='write')
+open(NEWUNIT=error_data, file='error_jacobi_implicit.dat', status='unknown', action='write')
 do j = 0, N-1
     write(error_data, *) (j*dz)*L , abs( temperaturesta(j+1)-f(300, j*dz) )
 end do
