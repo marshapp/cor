@@ -10,6 +10,6 @@ Podem trobar també l'arxiu "errors.gpi", que una vegada carregat mostra dos gr�
 
 També presentem una animació del probelma a la carpeta "EXTRA_animacio".
 
-Les instruccions referents a l'execució del codi (els READMEs) del mètode d'Euler explícit, dels mètodes implícits (Euler implícit i Crank-Nicolson) i de l'animació són a les seves respectives carpetes.
+Les instruccions referents a l'execució del codi (els READMEs) del mètode d'Euler explícit, dels mètodes implícits i de l'animació són a les seves respectives carpetes.
 
 
