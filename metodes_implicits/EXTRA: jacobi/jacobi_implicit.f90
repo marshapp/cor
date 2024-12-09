@@ -14,7 +14,9 @@ PROGRAM jacobi
     ! Its rows are the vectors we'll input in gauss-seidel.
 
 
-    !---------ISAAC
+    !Define the variables to run jacobi method
+    !in x vector we'll store the solution of each iteration
+    !x_1 contains the previous solution
     real(KIND=DP) ::  x(N-2), x_1(N-2)
     integer :: iter
     real(KIND=DP) :: sum, error
@@ -83,25 +85,30 @@ PROGRAM jacobi
         bp(1) = dt + cond*(gamma) + ter(m-1,2)
         bp(N-2) = dt + cond*(gamma) + ter(m-1,N-1)
     
-        !--------------------------------------JACOBI------------------------------------ ISAAC!!!
+        
 
         x= ter(m-1,2:N-1)   ! We'll use the vector from the previous step as the
         ! initial vector for the iteration, since it's probably close to the one we want to find.
-        
+
+        !iterate through the jacobi method
         do iter = 1, steps
-        
-            x_1 = x ! la x de l'anterior iteració ara és x_1
-            do i = 1, N-2 ! suma per cada x(i) 
+            !the solution of the temperature vector in the previous step is used to find the next one
+            x_1 = x 
+            !now we implement jacobi formula for each component of the temperatures vector
+            do i = 1, N-2 
                 sum = 0
                 do j = 1, N-2
                     if (j/=i) then
                         sum = sum + mat(i,j)*x_1(j)
                     end if
                 end do 
-                x(i)=(bp(i)-sum)/mat(i,i) ! genera la nova x
+                !here we find the new value for the temperature vector
+                x(i)=(bp(i)-sum)/mat(i,i) 
             end do
+            !compute the diference betwen contiguous solutions (ie error)
             error = maxval(abs(x - x_1))
-    
+
+            !when error is below  tolerance iteration stops 
             if (error < tolerance) then
                 exit
             end if
@@ -111,7 +118,7 @@ PROGRAM jacobi
             
         end do
     
-    
+        !store the solution in the ter matrix
         ter(m,2:N-1) = x
     
     END DO
