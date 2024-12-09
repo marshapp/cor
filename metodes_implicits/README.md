@@ -1,8 +1,8 @@
-El mètode de Gauss-Seidel és el nostre mètode principal de resolució dels mètodes implícits.
+El mètode de Gauss-Seidel és el mètode principal que utilitzem en la resolució dels mètodes implícits.
 
 En aquesta carpeta, existeix una altra anomenada "EXTRA: jacobi". En aquesta s'hi troben també programes referents a la implementació del mètode d'Euler implícit però utilitzant el mètode de Jacobi per resoldre els sistemes d'equacions. Ha de quedar clar que la nostra intenció és que principalment se'ns avalui la implementació del mètode d'Euler implícit utilitzant Gauss-Seidel i que la part referent a Jacobi és un EXTRA que afegim per completitud i en certa manera per justificar l'ús preferent de Gauss-Seidel davant de Jacobi.
 
-El cas és que per implementar els mètodes d'Euler implícit i de Crank-Nicolson per Gauss-Seidel hem utilitzat un subprograma amb un mòdul que implementa la solució de sistemes d'equacions per aquest mètode. Per tant, cal posar atenció a l'execució d'aquesta part del codi. Cal seguir estrictament l'ordre descrit a continuació:
+El cas és que per implementar els mètodes d'Euler implícit i de Crank-Nicolson per Gauss-Seidel hem utilitzat un subprograma amb un mòdul que implementa la resolució de sistemes d'equacions per aquest mètode. Per tant, cal posar atenció a l'execució d'aquesta part del codi. Cal seguir estrictament l'ordre descrit a continuació:
 
 Primer cal compilar el subprograma que conté el mòdul referent a Gauss-Seidel, "gauss-seidel.f90", en un arxiu objecte escribint a la terminal "gfortran gauss-seidel.f90 -o gauss-seidel.o -c". Una vegada fet això, per compilar els programes corresponents al mètode d'Euler implícit i de Crank-Nicolson, s'ha d'escriure a la terminal el següent: primer, "gfortran -c implicit.f90 -o implicit.o" (es compila el programa en un arxiu objecte) i després "gfortran implicit.o gauss-seidel.o -o implicit" (es crea un executable en enllaçar els objectes), i el mateix pel programa "crank.f90".
 
