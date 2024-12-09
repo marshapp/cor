@@ -2,7 +2,7 @@ Benvinguts al nostre repositori!
 
 Els programes corresponents al mètode d'Euler explícit es troben a la carpeta "euler_explicit". Els corresponents als mètodes d'Euler implícit i Crank-Nicolson són a la carpeta "metodes_implicits".
 
-Presentem la solució al problema en l'arxiu "solució.f90", que una vegada compilat i executat hauria d'imprimir a la terminal el resultat del problema (temps màxim que podem aplicar el senyal de 40 V sense violar les condicions que garanteixen l'eficiència del tractament) en segons.
+Presentem la solució al problema en l'arxiu "solucio.f90", que una vegada compilat i executat hauria d'imprimir a la terminal el resultat del problema (temps màxim que podem aplicar el senyal de 40 V sense violar les condicions que garanteixen l'eficiència del tractament) en segons.
 
 Podem trobar també l'arxiu "errors.gpi", que una vegada carregat mostra dos gràfics amb els errors numèrics de cada mètode, un en el que es comparen tots els mètodes amb tots els mallats proposats i un altre en el que es comparen tots els mètodes amb un mateix mallat que utilitzem en l'anàlisi de resultats de l'informe pdf. Ara bé, aquest arxiu s'ha d'executar una vegada s'hagin executat els programes relatius al mètode d'Euler explícit, d'Euler implícit (per Gauss-Sidel) i de Crank-Nicolson (per Gauss-Seidel) i conseqüentment generat els arxius amb les dades necessàries següents: "error_explicit.dat", "error_implicit.dat" i "error_crank.dat".
 
