@@ -33,8 +33,10 @@ PROGRAM jacobi
     ! It's defined by a difference of temperature (in °C) of 0,001.
     steps = 1000 ! Maximum number of steps we allow'll Gauss-Seidel to take.
     
-    scale=1 ! We'll use scale to define the relation between dz and dt (see below).
+    scale=1
+    ! We'll use scale to define the relation between dz and dt (see below).
     ! scale is the inverse of gamma.
+    ! We only do it for one value of scale because we'll only compare this particular case.
 
     ! Define the discretizations.
     dz= (1.0_DP) / (N - 1)
@@ -90,11 +92,11 @@ PROGRAM jacobi
         x= ter(m-1,2:N-1)   ! We'll use the vector from the previous step as the
         ! initial vector for the iteration, since it's probably close to the one we want to find.
 
-        !iterate through the jacobi method
+        ! Iterate through the Jacobi method.
         do iter = 1, steps
-            !the solution of the temperature vector in the previous step is used to find the next one
+            ! The solution of the temperature vector in the previous step is used to find the next one.
             x_1 = x 
-            !now we implement jacobi formula for each component of the temperatures vector
+            ! Now we implement Jacobi formula for each component of the temperatures vector.
             do i = 1, N-2 
                 sum = 0
                 do j = 1, N-2
@@ -102,13 +104,13 @@ PROGRAM jacobi
                         sum = sum + mat(i,j)*x_1(j)
                     end if
                 end do 
-                !here we find the new value for the temperature vector
+                ! Here we find the new value for the temperature vector.
                 x(i)=(bp(i)-sum)/mat(i,i) 
             end do
-            !compute the diference betwen contiguous solutions (ie error)
+            ! Compute the difference betwen contiguous solutions (ie error).
             error = maxval(abs(x - x_1))
 
-            !when error is below  tolerance iteration stops 
+            ! When error is below tolerance iteration stops.
             if (error < tolerance) then
                 exit
             end if
@@ -118,7 +120,7 @@ PROGRAM jacobi
             
         end do
     
-        !store the solution in the ter matrix
+        ! Store the solution in the ter matrix.
         ter(m,2:N-1) = x
     
     END DO
