@@ -10,7 +10,7 @@ set arrow 1 from 0.0075, graph 0 to 0.0075, graph 1 nohead ls 4
 set arrow 2 from 0.0125, graph 0 to 0.0125, graph 1 nohead ls 4
 
 
-set output "implicit_grafica_comparacio.png"
+set output "jacobi_implicit_comparacio.png"
 
 set key top right
 
@@ -20,13 +20,13 @@ set yrange[36:54]
 set xlabel "z (m)"
 set ylabel "T (°C)"
 
-plot "data_implicit_gs.dat" u 1:4 w l ls 3 t "Solució analítica", "data_implicit_gs.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "data_implicit_jacobi.dat" u 1:2 w l ls 2 t "Jacobi"
+plot "../implicit.dat" u 1:4 w l ls 3 t "Solució analítica", "../implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "jacobi_implicit.dat" u 1:2 w l ls 2 t "Jacobi"
 
 set output
 
 
 
-set output "error_implicit_comparacio.png"
+set output "error_jacobi_implicit_comparacio.png"
 
 set key top right
 
@@ -36,6 +36,6 @@ set ylabel "ΔT (°C)"
 set xrange[-0.001:0.021]
 set yrange[0:0.1]
 
-plot "resultats_error_implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "resultats_error_implicit_jacobi.dat" u 1:2 w l ls 2 t "Jacobi"
+plot "../error_implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "error_jacobi_implicit.dat" u 1:2 w l ls 2 t "Jacobi"
 
 set output
