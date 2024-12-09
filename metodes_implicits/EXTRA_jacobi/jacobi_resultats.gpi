@@ -15,7 +15,7 @@ set output "jacobi_implicit_comparacio.png"
 set key top right
 
 set xrange[-0.001:0.021]
-set yrange[36:54]
+set yrange[36:55]
 
 set xlabel "z (m)"
 set ylabel "T (°C)"
