@@ -41,6 +41,7 @@ PROGRAM jacobi
     ! Define the discretizations.
     dz= (1.0_DP) / (N - 1)
     dt=(1.0_DP/scale)*(dz**2)
+    gamma = dt/dz**2
     
     
     ! Define the matrix mat,  which is the matrix that contains the coefficients of the system of equations.
@@ -87,29 +88,27 @@ PROGRAM jacobi
         bp(1) = dt + cond*(gamma) + ter(m-1,2)
         bp(N-2) = dt + cond*(gamma) + ter(m-1,N-1)
     
-        
 
         x= ter(m-1,2:N-1)   ! We'll use the vector from the previous step as the
         ! initial vector for the iteration, since it's probably close to the one we want to find.
-
+        
         ! Iterate through the Jacobi method.
         do iter = 1, steps
             ! The solution of the temperature vector in the previous step is used to find the next one.
-            x_1 = x 
+            x_1 = x
             ! Now we implement Jacobi formula for each component of the temperatures vector.
-            do i = 1, N-2 
+            do i = 1, N-2
                 sum = 0
                 do j = 1, N-2
                     if (j/=i) then
                         sum = sum + mat(i,j)*x_1(j)
                     end if
-                end do 
+                end do
                 ! Here we find the new value for the temperature vector.
-                x(i)=(bp(i)-sum)/mat(i,i) 
+                x(i)=(bp(i)-sum)/mat(i,i)
             end do
-            ! Compute the difference betwen contiguous solutions (ie error).
             error = maxval(abs(x - x_1))
-
+            
             ! When error is below tolerance iteration stops.
             if (error < tolerance) then
                 exit
