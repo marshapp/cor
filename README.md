@@ -1,5 +1,7 @@
 Benvinguts al nostre repositori!
 
+Autors: Núria Castillo Ariño, Eira Jacas García, Marcel López Freixes i Isaac Baldi Garcia
+
 Els programes corresponents al mètode d'Euler explícit es troben a la carpeta "euler_explicit". Els corresponents als mètodes d'Euler implícit i Crank-Nicolson són a la carpeta "metodes_implicits".
 
 Presentem la solució al problema en l'arxiu "solucio.f90", que una vegada compilat i executat hauria d'imprimir a la terminal el resultat del problema (temps màxim que podem aplicar el senyal de 40 V sense violar les condicions que garanteixen l'eficiència del tractament) en segons.
