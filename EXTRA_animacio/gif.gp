@@ -1,6 +1,4 @@
-
 set terminal pngcairo size 800,600 enhanced font "Arial,14"
-
 
 # Creem els frames del fig des dels fitxers .txt amb un bucle
 #Usem sprintf per generar el nom de cada fitxer de sortida i el títol amb el temps corresponent a cada frame
@@ -41,15 +39,5 @@ do for [frame=1:101] {
     set colorbox
     set palette defined ( 0 "black", 1 "red", 2 "yellow" )
     set cblab 'Temperatura (ºC)'
-    unset border
-    unset key
-    unset xlabel
-    unset ylabel
-    unset title
-    unset tics
     plot 'linia1.txt' with lines lw 2 lc 'black', 'linia2.txt' with lines lw 2 lc 'black'
-    unset multiplot
-    unset xrange 
-    unset yrange
-    
 }
