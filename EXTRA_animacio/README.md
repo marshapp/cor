@@ -5,3 +5,5 @@ Una vegada compilat i executat el fitxer "gif.f90", s'haurien de generar fitxers
 Els fitxers "animacio1.gpi" i "animacio2.gpi" converteixen les dades dels fitxers .txt en animacions. Una vegada carregats, hauria d'aparèixer un fitxer .gif "animacio1.gif" o "animacio2.gif" en funció de quin dels dos programes s'hagi carregat.
 
 Els fitxers "linia1.txt" i "linia2.txt" només hi són perquè els utilitzem en els programes .gpi per generar els gifs, no cal que siguin manipulats.
+
+Afegim els gifs explicitament per assegurar-nos de que puguin ser reproduits, en tot cas no hauria d'haver cap problema a l'hora d'obtenir-los com hem indicat a dalt.
