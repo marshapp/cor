@@ -1,11 +1,13 @@
 program solucio
 
     implicit none(type, external) 
+    INTEGER,PARAMETER :: DP = SELECTED_REAL_KIND(15,307)
+    
     integer :: i, j, N_t
     integer, parameter :: N_z = 101
-    real :: dz, dt, alpha, lambda, P_ext, beta
-    real, parameter :: L = 0.02, V = 40, c_v = 3686, rho = 1081, k = 0.56, sigma = 0.472, T_c=36.5, gamma=0.25, t_a=0.025
-    real, allocatable :: T(:,:) 
+    real(KIND=DP) :: dz, dt, alpha, lambda, P_ext, beta
+    real(KIND=DP), parameter :: L = 0.02, V = 40, c_v = 3686, rho = 1081, k = 0.56, sigma = 0.472, T_c=36.5, gamma=0.25, t_a=0.025
+    real(KIND=DP), allocatable :: T(:,:) 
 
     dz = 1/(real(N_z)-1) !Definim l'interval espacial
 
