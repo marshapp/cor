@@ -6,7 +6,7 @@ El fitxer .f90 conté el codi de fortran per generar les dades que necessitem pe
 En ell es soluciona l'equació diferencial del nostre problema per uns quants punts temporals representatius i es generen els fitxers .txt corresponents a cada temps amb els valors de les temperatures a cada punt de l'espai. 
 
 El fitxer .gp conté el codi de gnuplot per passar les dades dels fitxer .txt a imatges .png que seràn els frames del gif. 
-Si es vol obtenir la primera animació s'ha desactivar l'opció $set palette maxcolors 7 i així obtindrem un degradat de colors. 
+Si es vol obtenir la primera animació s'ha de desactivar l'opció $set palette maxcolors 7 i així obtindrem un degradat de colors. 
 La segona animació es genera activant aquesta opció.
 
 Per últim per generar el gif, usem ImageMagick. A la terminal escrivim el següent codi:
