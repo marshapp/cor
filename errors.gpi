@@ -22,7 +22,7 @@ set ylabel "ΔT (°C)"
 set xrange[-0.001:0.021]
 set yrange[0:0.01]
 
-plot "/euler_explicit/error_explicit.dat" u 1:2 w l ls 1 t "explícit γ=0,49", "/euler_explicit/error_explicit.dat" u 1:3 w l ls 2 t " exlpícit γ=0,25", "/metodes_implicits/error_implicit.dat" u 1:2 w l ls 3 t "implícit γ=1", "/metodes_implicits/error_implicit.dat" u 1:3 w l ls 4 t "implícit γ=0,5", "/metodes_implicits/error_crank.dat" u 1:2 w l ls 5 t "crank γ=0,5", "/metodes_implicits/error_crank.dat" u 1:3 w l ls 6 t "crank γ=1"
+plot "euler_explicit/error_explicit.dat" u 1:2 w l ls 1 t "explícit γ=0,49", "euler_explicit/error_explicit.dat" u 1:3 w l ls 2 t " exlpícit γ=0,25", "metodes_implicits/error_implicit.dat" u 1:2 w l ls 3 t "implícit γ=1", "metodes_implicits/error_implicit.dat" u 1:3 w l ls 4 t "implícit γ=0,5", "metodes_implicits/error_crank.dat" u 1:2 w l ls 5 t "crank γ=0,5", "metodes_implicits/error_crank.dat" u 1:3 w l ls 6 t "crank γ=1"
 
 set output
 
@@ -40,6 +40,6 @@ set ylabel "ΔT (°C)"
 set xrange[-0.001:0.021]
 set yrange[0:0.004]
 
-plot "/euler_explicit/error_explicit.dat" u 1:3 w l ls 3 t "explícit", "/metodes_implicits/error_implicit.dat" u 1:4 w l ls 2 t "implícit", "/metodes_implicits/error_crank.dat" u 1:4 w l ls 1 t "crank"
+plot "euler_explicit/error_explicit.dat" u 1:3 w l ls 3 t "explícit", "metodes_implicits/error_implicit.dat" u 1:4 w l ls 2 t "implícit", "metodes_implicits/error_crank.dat" u 1:4 w l ls 1 t "crank"
 
 set output
