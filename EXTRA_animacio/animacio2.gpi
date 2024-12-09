@@ -1,8 +1,5 @@
-#!/usr/bin/gnuplot
-
-# Configurar el terminal per generar un GIF animat.
 set terminal gif animate delay 10 size 800,600 enhanced font "Arial,14"
-set output "animacio.gif"
+set output "animacio2.gif"
 
 
 # Bucle per generar cada fotograma del GIF
@@ -17,7 +14,7 @@ do for [frame=1:101] {
     set colorbox
     set cblab 'Temperatura (ºC)'
     set xlabel 'z (m)'
-    set ylabel 'r (m)'
+    set ylabel 'radi càtode (m)'
     set title sprintf("Temps: %d s", frame*0.63)
 
     # Paleta de colors per a les temperatures
@@ -38,6 +35,5 @@ do for [frame=1:101] {
          'linia2.txt' with lines lw 2 lc 'black'
 }
 
-# Tancar el fitxer de sortida
 set output
 

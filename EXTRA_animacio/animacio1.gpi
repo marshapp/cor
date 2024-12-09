@@ -1,0 +1,38 @@
+set terminal gif animate delay 10 size 800,600 enhanced font "Arial,14"
+set output "animacio1.gif"
+
+
+# Bucle per generar cada fotograma del GIF
+do for [frame=1:101] {
+    reset
+    unset key
+    set xrange [0:0.02]
+    set yrange [0:0.02]
+    set autoscale fix
+    set border
+    set tics
+    set colorbox
+    set cblab 'Temperatura (ºC)'
+    set xlabel 'z (m)'
+    set ylabel 'radi càtode (m)'
+    set title sprintf("Temps: %d s", frame*0.63)
+
+    # Paleta de colors per a les temperatures
+    set palette defined ( \
+        36.5 "black", \
+        40 "brown", \
+        45 "red", \
+        47 "orange", \
+        50 "dark-yellow", \
+        52 "yellow", \
+        60 "white" )
+    set cbrange[36.5:60]
+
+    # Gràfica del camp de temperatures
+     plot sprintf("d_%d.txt", frame) with image notitle, \
+         'linia1.txt' with lines lw 2 lc 'black', \
+         'linia2.txt' with lines lw 2 lc 'black'
+}
+
+set output
+
