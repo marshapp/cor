@@ -15,7 +15,7 @@ set output "jacobi_implicit_comparacio.png"
 set key top right
 
 set xrange[-0.001:0.021]
-set yrange[36:54]
+set yrange[36:55]
 
 set xlabel "z (m)"
 set ylabel "T (°C)"
@@ -34,7 +34,7 @@ set xlabel "z (m)"
 set ylabel "ΔT (°C)"
 
 set xrange[-0.001:0.021]
-set yrange[0:0.1]
+set yrange[0:0.45]
 
 plot "../error_implicit.dat" u 1:2 w l ls 1 t "Gauss-Seidel" , "error_jacobi_implicit.dat" u 1:2 w l ls 2 t "Jacobi"
 
