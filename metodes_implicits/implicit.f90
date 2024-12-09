@@ -32,6 +32,8 @@ PROGRAM implicit
     ! scale is the inverse of gamma.
     ! We keep in scales the values of scale (and therefore gamma) over
     ! which we want to iterate (we'll use them in the report).
+    ! Even though in the outline we're only asked to use the first two values of scale, we do the
+    ! third one in order to compare this method to Euler's explicit method later.
 
     ALLOCATE(vecm(N-2))
     ALLOCATE(temperaturesta(3,N))
