@@ -1,6 +1,6 @@
 El mètode de Gauss-Seidel és el mètode principal que utilitzem en la resolució dels mètodes implícits.
 
-En aquesta carpeta, existeix una altra anomenada "EXTRA: jacobi". En aquesta s'hi troben també programes referents a la implementació del mètode d'Euler implícit però utilitzant el mètode de Jacobi per resoldre els sistemes d'equacions. Ha de quedar clar que la nostra intenció és que principalment se'ns avalui la implementació del mètode d'Euler implícit utilitzant Gauss-Seidel i que la part referent a Jacobi és un EXTRA que afegim per completitud i en certa manera per justificar l'ús preferent de Gauss-Seidel davant de Jacobi.
+En aquesta carpeta, existeix una altra anomenada "EXTRA_jacobi". En aquesta s'hi troben també programes referents a la implementació del mètode d'Euler implícit però utilitzant el mètode de Jacobi per resoldre els sistemes d'equacions. Ha de quedar clar que la nostra intenció és que principalment se'ns avalui la implementació del mètode d'Euler implícit utilitzant Gauss-Seidel i que la part referent a Jacobi és un EXTRA que afegim per completitud i en certa manera per justificar l'ús preferent de Gauss-Seidel davant de Jacobi.
 
 El cas és que per implementar els mètodes d'Euler implícit i de Crank-Nicolson per Gauss-Seidel hem utilitzat un subprograma amb un mòdul que implementa la resolució de sistemes d'equacions per aquest mètode. Per tant, cal posar atenció a l'execució d'aquesta part del codi. Cal seguir estrictament l'ordre descrit a continuació:
 
